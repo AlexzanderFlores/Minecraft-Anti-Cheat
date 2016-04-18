@@ -41,13 +41,15 @@ public class BlocksPerSecondLogger implements Listener {
 				}
 				lastLocations.put(name, pLoc);
 				double distance = pLoc.distance(lLoc);
-				List<Double> logging = loggings.get(name);
-				if(logging == null) {
-					logging = new ArrayList<Double>();
+				if(distance > 0) {
+					List<Double> logging = loggings.get(name);
+					if(logging == null) {
+						logging = new ArrayList<Double>();
+					}
+					logging.add(distance);
+					loggings.put(name, logging);
+					Bukkit.getLogger().info("ANTI CHEAT: " + name + " distance: " + distance);
 				}
-				logging.add(distance);
-				loggings.put(name, logging);
-				Bukkit.getLogger().info("ANTI CHEAT: " + name + " distance: " + distance);
 			}
 		}
 	}
