@@ -72,7 +72,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase implements Listene
 				if(attacksPerSecond.containsKey(player.getName())) {
 					attacks = attacksPerSecond.get(player.getName());
 				}
-				Bukkit.getLogger().info("Attacks: " + attacks);
+				Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " attacks: " + attacks);
 				if(++attacks >= 7) {
 					ban(player);
 				} else {

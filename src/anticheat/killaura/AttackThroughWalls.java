@@ -39,11 +39,10 @@ public class AttackThroughWalls extends AntiCheatBase implements Listener {
 					if(counters.containsKey(name)) {
 						amount = counters.get(name);
 					}
-					if(++amount >= 3) {
-						Bukkit.getLogger().info(name + " has attacked through walls 3 times");
+					counters.put(name, ++amount);
+					if(amount >= 3) {
+						Bukkit.getLogger().info("ANTI CHEAT: " + name + " has attacked through walls 3 times");
 						counters.remove(name);
-					} else {
-						counters.put(name, amount);
 					}
 				}
 			}

@@ -3,10 +3,15 @@ package anticheat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import ostb.customevents.TimeEvent;
+import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
 public class WaterWalkDetection extends AntiCheatBase implements Listener {
@@ -28,19 +33,27 @@ public class WaterWalkDetection extends AntiCheatBase implements Listener {
 		}
 	}
 	
-	//TODO: Add the functionality for this event just to this class to help detect water walking
-	/*@EventHandler
-	public void onWaterSplash(WaterSplashEvent event) {
+	@EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
 		if(isEnabled()) {
-			Player player = event.getPlayer();
-			int counter = 0;
-			if(counters.containsKey(player.getName())) {
-				counter = counters.get(player.getName());
-			}
-			if(++counter >= 5) {
-				ban(player);
-			}
-			counters.put(player.getName(), counter);
+			Material material = event.getTo().getBlock().getType();
+	        if(material == Material.STATIONARY_WATER && event.getFrom().getBlock().getType() == Material.AIR && event.getPlayer().getVelocity().getY() < -0.40d) {
+	        	Player player = event.getPlayer();
+	        	Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " has moved into water");
+				int counter = 0;
+				if(counters.containsKey(player.getName())) {
+					counter = counters.get(player.getName());
+				}
+				counters.put(player.getName(), ++counter);
+				if(counter >= 5) {
+					ban(player);
+				}
+	        }
 		}
-	}*/
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		counters.remove(event.getPlayer().getName());
+	}
 }

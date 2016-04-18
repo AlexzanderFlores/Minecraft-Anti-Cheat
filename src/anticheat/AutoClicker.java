@@ -45,7 +45,7 @@ public class AutoClicker extends AntiCheatBase implements Listener {
 		if(isEnabled() && (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 			Player player = event.getPlayer();
 			final String name = player.getName();
-			Bukkit.getLogger().info("Left clicking: " + name);
+			Bukkit.getLogger().info("ANTI CHEAT: " + name + " is left clicking");
 			int click = 0;
 			if(clicks.containsKey(name)) {
 				click = clicks.get(name);
@@ -59,7 +59,7 @@ public class AutoClicker extends AntiCheatBase implements Listener {
 				}
 				logging.add(cps);
 				loggings.put(name, logging);
-				Bukkit.getLogger().info("Cancelling click for " + name);
+				Bukkit.getLogger().info("ANTI CHEAT: cancelling click for " + name);
 				event.setCancelled(true);
 			}
 		}

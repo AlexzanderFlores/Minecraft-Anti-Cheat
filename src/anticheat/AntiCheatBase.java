@@ -38,14 +38,11 @@ public class AntiCheatBase {
 	public AntiCheatBase() {
 		banned = new ArrayList<String>();
 		toKick = new HashMap<String, String>();
-		Plugins plugin = OSTB.getPlugin();
-		if(plugin != Plugins.HUB) {
-			new InvisibleFireGlitchFix();
-			new FastBowFix();
-			new AutoCritFix();
-			new AttackThroughWalls();
-			new AttackDistanceLogger();
-		}
+		new InvisibleFireGlitchFix();
+		new FastBowFix();
+		new AutoCritFix();
+		new AttackThroughWalls();
+		new AttackDistanceLogger();
 		new SpeedFix();
 		new SurvivalFly();
 		new InventoryKillAuraDetection();
