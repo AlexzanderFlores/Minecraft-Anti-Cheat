@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import anticheat.AntiCheatBase;
 import ostb.customevents.TimeEvent;
+import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -55,5 +56,10 @@ public class AttackThroughWalls extends AntiCheatBase implements Listener {
 		if(ticks == 20 * 5) {
 			counters.clear();
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		counters.remove(event.getPlayer().getName());
 	}
 }

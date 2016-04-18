@@ -40,16 +40,14 @@ public class AntiCheatBase {
 		toKick = new HashMap<String, String>();
 		Plugins plugin = OSTB.getPlugin();
 		if(plugin != Plugins.HUB) {
-			new SpeedFix();
-			new SurvivalFly();
 			new InvisibleFireGlitchFix();
-			new FenceGlitchFix();
 			new FastBowFix();
 			new AutoCritFix();
 			new AttackThroughWalls();
 			new AttackDistanceLogger();
-			new AntiNoSlow();
 		}
+		new SpeedFix();
+		new SurvivalFly();
 		new InventoryKillAuraDetection();
 		new HeadlessFix();
 		new SpamBotFix();

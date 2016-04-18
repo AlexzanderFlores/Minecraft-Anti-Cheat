@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import ostb.OSTB;
 import ostb.customevents.player.AsyncPlayerLeaveEvent;
 import ostb.server.DB;
 import ostb.server.util.EventUtil;
@@ -50,10 +51,16 @@ public class AttackDistanceLogger implements Listener {
 		if(loggings.containsKey(name)) {
 			List<Double> logging = loggings.get(name);
 			if(logging != null) {
+				double average = 0.0d;
 				for(double distance : logging) {
-					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + distance + "'");
+					average += distance;
+				}
+				if(average > 0) {
+					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "', '" + OSTB.getServerName() + "'");
 				}
 				loggings.get(name).clear();
+				logging.clear();
+				logging = null;
 			}
 			loggings.remove(name);
 		}
