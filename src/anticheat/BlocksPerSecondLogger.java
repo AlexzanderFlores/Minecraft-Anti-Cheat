@@ -39,6 +39,7 @@ public class BlocksPerSecondLogger implements Listener {
 				if(lastLocations.containsKey(name)) {
 					lLoc = lastLocations.get(name);
 				}
+				lastLocations.put(name, pLoc);
 				double distance = pLoc.distance(lLoc);
 				List<Double> logging = loggings.get(name);
 				if(logging == null) {
