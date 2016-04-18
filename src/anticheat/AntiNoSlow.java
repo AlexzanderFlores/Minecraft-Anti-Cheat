@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import ostb.server.util.EventUtil;
 
-public class AntiNoSlow extends AntiCheat implements Listener {
+public class AntiNoSlow extends AntiCheatBase implements Listener {
 	public AntiNoSlow() {
         super("No Slowdown");
         EventUtil.register(this);

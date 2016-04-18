@@ -11,7 +11,7 @@ import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
 
-public class HeadlessFix extends AntiCheat implements Listener {
+public class HeadlessFix extends AntiCheatBase implements Listener {
 	private Map<String, Integer> counters = null;
 	
 	public HeadlessFix() {

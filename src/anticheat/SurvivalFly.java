@@ -25,7 +25,7 @@ import ostb.server.PerformanceHandler;
 import ostb.server.tasks.AsyncDelayedTask;
 import ostb.server.util.EventUtil;
 
-public class SurvivalFly extends AntiCheat implements Listener {
+public class SurvivalFly extends AntiCheatBase implements Listener {
 	private Map<String, Integer> heightIncreasing = null;
 	private Map<String, Integer> wouldBan = null;
 	private Map<String, Integer> disabledCounters = null;

@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import ostb.customevents.TimeEvent;
 import ostb.server.util.EventUtil;
 
-public class WaterWalkDetection extends AntiCheat implements Listener {
+public class WaterWalkDetection extends AntiCheatBase implements Listener {
 	private Map<String, Integer> counters = null;
 	
 	public WaterWalkDetection() {

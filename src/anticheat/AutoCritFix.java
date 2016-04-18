@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import ostb.customevents.TimeEvent;
 import ostb.server.util.EventUtil;
 
-public class AutoCritFix extends AntiCheat implements Listener {
+public class AutoCritFix extends AntiCheatBase implements Listener {
 	private Map<String, Integer> counters = null;
 	
 	public AutoCritFix() {

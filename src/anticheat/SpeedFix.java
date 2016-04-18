@@ -27,7 +27,7 @@ import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
 
-public class SpeedFix extends AntiCheat implements Listener {
+public class SpeedFix extends AntiCheatBase implements Listener {
 	private Map<String, Location> lastLocations = null;
 	private Map<String, Integer> counters = null;
 	private Map<String, Integer> disabledCounters = null;

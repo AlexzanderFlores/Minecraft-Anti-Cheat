@@ -12,12 +12,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import anticheat.AntiCheat;
+import anticheat.AntiCheatBase;
 import ostb.customevents.TimeEvent;
 import ostb.server.util.EventUtil;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class AttackThroughWalls extends AntiCheat implements Listener {
+public class AttackThroughWalls extends AntiCheatBase implements Listener {
 	private Map<String, Integer> counters = null;
 	
 	public AttackThroughWalls() {

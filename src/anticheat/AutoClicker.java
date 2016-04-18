@@ -18,7 +18,7 @@ import ostb.server.DB;
 import ostb.server.tasks.DelayedTask;
 import ostb.server.util.EventUtil;
 
-public class AutoClicker extends AntiCheat implements Listener {
+public class AutoClicker extends AntiCheatBase implements Listener {
 	private Map<String, Integer> clicks = null;
 	private Map<String, Integer> logs = null;
 	private Map<String, List<Integer>> loggings = null;

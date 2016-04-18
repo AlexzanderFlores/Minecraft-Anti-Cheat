@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import anticheat.AntiCheat;
+import anticheat.AntiCheatBase;
 import ostb.OSTB;
 import ostb.OSTB.Plugins;
 import ostb.customevents.TimeEvent;
@@ -22,7 +22,7 @@ import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
-public class InventoryKillAuraDetection extends AntiCheat implements Listener {
+public class InventoryKillAuraDetection extends AntiCheatBase implements Listener {
 	private boolean hub = false;
 	private Map<String, Integer> attacksPerSecond = null;
 	private Map<String, Location> spawningLocation = null;

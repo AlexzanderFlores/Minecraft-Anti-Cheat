@@ -19,7 +19,7 @@ import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
 
-public class FastBowFix extends AntiCheat implements Listener {
+public class FastBowFix extends AntiCheatBase implements Listener {
 	private Map<String, Integer> timesFired = null;
 	private Map<String, List<Integer>> loggings = null;
 	
