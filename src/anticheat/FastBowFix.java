@@ -52,7 +52,8 @@ public class FastBowFix extends AntiCheatBase implements Listener {
 					if(timesFired.containsKey(player.getName())) {
 						times = timesFired.get(player.getName());
 					}
-					if(++times >= 2) {
+					timesFired.put(player.getName(), ++times);
+					if(times >= 2) {
 						if(times >= 10) {
 							List<Integer> logging = loggings.get(player.getName());
 							if(logging == null) {
@@ -63,7 +64,6 @@ public class FastBowFix extends AntiCheatBase implements Listener {
 						}
 						event.setCancelled(true);
 					}
-					timesFired.put(player.getName(), times);
 				}
 			} else {
 				timesFired.remove(player.getName());

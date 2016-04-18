@@ -29,10 +29,9 @@ public class HeadlessFix extends AntiCheatBase implements Listener {
 			if(counters.containsKey(name)) {
 				counter = counters.get(name);
 			}
-			if(++counter >= 5) {
+			counters.put(name, ++counter);
+			if(counter >= 5) {
 				ban(event.getPlayer());
-			} else {
-				counters.put(name, counter);
 			}
 		}
 	}
