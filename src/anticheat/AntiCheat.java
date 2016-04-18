@@ -12,11 +12,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import anticheat.killaura.AttackThroughWalls;
+import anticheat.killaura.InventoryKillAuraDetection;
 import ostb.OSTB;
 import ostb.OSTB.Plugins;
 import ostb.ProPlugin;
-import ostb.anticheat.killaura.AttackThroughWalls;
-import ostb.anticheat.killaura.InventoryKillAuraDetection;
 import ostb.customevents.player.PlayerBanEvent;
 import ostb.gameapi.SpectatorHandler;
 import ostb.player.MessageHandler;

@@ -1,4 +1,5 @@
 name: AntiCheat
 main: anticheat.AntiCheat
 version: 1.0
+depend: [OSTB]
 authors: [Leet_Gamer]

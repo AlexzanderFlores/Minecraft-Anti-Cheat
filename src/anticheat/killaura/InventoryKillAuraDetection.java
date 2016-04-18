@@ -14,9 +14,9 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import anticheat.AntiCheat;
 import ostb.OSTB;
 import ostb.OSTB.Plugins;
-import ostb.anticheat.AntiCheat;
 import ostb.customevents.TimeEvent;
 import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.PerformanceHandler;

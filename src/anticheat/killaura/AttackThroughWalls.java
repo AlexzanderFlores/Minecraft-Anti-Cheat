@@ -12,7 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import ostb.anticheat.AntiCheat;
+import anticheat.AntiCheat;
 import ostb.customevents.TimeEvent;
 import ostb.server.util.EventUtil;
 
