@@ -18,7 +18,6 @@ import ostb.server.DB;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
-
 public class FastBowFix extends AntiCheatBase implements Listener {
 	private Map<String, Integer> timesFired = null;
 	private Map<String, List<Integer>> loggings = null;
@@ -54,7 +53,7 @@ public class FastBowFix extends AntiCheatBase implements Listener {
 						times = timesFired.get(player.getName());
 					}
 					if(++times >= 2) {
-						if(times >= 13) {
+						if(times >= 10) {
 							List<Integer> logging = loggings.get(player.getName());
 							if(logging == null) {
 								logging = new ArrayList<Integer>();
@@ -79,10 +78,16 @@ public class FastBowFix extends AntiCheatBase implements Listener {
 		if(loggings.containsKey(name)) {
 			List<Integer> logging = loggings.get(name);
 			if(logging != null) {
+				int average = 0;
 				for(int shots : logging) {
-					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + shots + "'");
+					average += shots;
+				}
+				if(average > 0) {
+					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "'");
 				}
 				loggings.get(name).clear();
+				logging.clear();
+				logging = null;
 			}
 			loggings.remove(name);
 		}
