@@ -11,7 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
+import anticheat.events.BPSEvent;
 import ostb.OSTB;
 import ostb.customevents.TimeEvent;
 import ostb.customevents.player.AsyncPlayerLeaveEvent;
@@ -33,25 +35,34 @@ public class BlocksPerSecondLogger implements Listener {
 		long ticks = event.getTicks();
 		if(ticks == 20) {
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				String name = player.getName();
-				Location pLoc = player.getLocation();
-				Location lLoc = pLoc;
-				if(lastLocations.containsKey(name)) {
-					lLoc = lastLocations.get(name);
-				}
-				lastLocations.put(name, pLoc);
-				double distance = pLoc.distance(lLoc);
-				if(distance > 0) {
-					List<Double> logging = loggings.get(name);
-					if(logging == null) {
-						logging = new ArrayList<Double>();
+				if(player.getTicksLived() >= 20 * 3) {
+					String name = player.getName();
+					Location pLoc = player.getLocation();
+					Location lLoc = pLoc;
+					if(lastLocations.containsKey(name)) {
+						lLoc = lastLocations.get(name);
 					}
-					logging.add(distance);
-					loggings.put(name, logging);
-					Bukkit.getLogger().info("ANTI CHEAT: " + name + " distance: " + distance);
+					lastLocations.put(name, pLoc);
+					if(pLoc.getWorld().getName().equals(lLoc.getWorld().getName()) && pLoc.getY() >= lLoc.getY()) {
+						double distance = pLoc.distance(lLoc);
+						if(distance > 0) {
+							Bukkit.getPluginManager().callEvent(new BPSEvent(player, distance));
+							List<Double> logging = loggings.get(name);
+							if(logging == null) {
+								logging = new ArrayList<Double>();
+							}
+							logging.add(distance);
+							loggings.put(name, logging);
+						}
+					}
 				}
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		lastLocations.remove(event.getPlayer().getName());
 	}
 	
 	@EventHandler
@@ -66,7 +77,7 @@ public class BlocksPerSecondLogger implements Listener {
 					average += distance;
 				}
 				if(average > 0) {
-					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + average + "', '" + OSTB.getServerName() + "'");
+					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "', '" + OSTB.getServerName() + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();
@@ -74,5 +85,6 @@ public class BlocksPerSecondLogger implements Listener {
 			}
 			loggings.remove(name);
 		}
+		lastLocations.remove(name);
 	}
 }

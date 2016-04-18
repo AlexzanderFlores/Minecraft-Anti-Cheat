@@ -43,7 +43,8 @@ public class AntiCheatBase implements Listener {
 		new AutoCritFix();
 		new AttackThroughWalls();
 		new AttackDistanceLogger();
-		new SpeedFix();
+		//new SpeedFix();
+		new SpeedFix2();
 		new SurvivalFly();
 		new InventoryKillAuraDetection();
 		new HeadlessFix();
