@@ -15,22 +15,24 @@ public class HeadlessFix extends AntiCheatBase implements Listener {
 	private Map<String, Integer> counters = null;
 	
 	public HeadlessFix() {
-		super("Headless/Derp");
+		super("Headless");
 		counters = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if(isEnabled() && event.getTo().getPitch() == 180.0f || event.getTo().getPitch() == -180.0f) {
+		float pitch = event.getTo().getPitch();
+		if(isEnabled() && (pitch == 180.0f || pitch == -180.0f)) {
+			String name = event.getPlayer().getName();
 			int counter = 0;
-			if(counters.containsKey(event.getPlayer().getName())) {
-				counter = counters.get(event.getPlayer().getName());
+			if(counters.containsKey(name)) {
+				counter = counters.get(name);
 			}
-			if(++counter >= 20) {
+			if(++counter >= 5) {
 				ban(event.getPlayer());
 			} else {
-				counters.put(event.getPlayer().getName(), counter);
+				counters.put(name, counter);
 			}
 		}
 	}
