@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import anticheat.killaura.AttackThroughWalls;
 import anticheat.killaura.InventoryKillAuraDetection;
@@ -28,16 +29,15 @@ import ostb.server.util.TimeUtil;
 import ostb.staff.ban.BanHandler;
 
 @SuppressWarnings("unused")
-public class AntiCheatBase {
+public class AntiCheatBase implements Listener {
 	private static boolean enabled = true;
-	private static List<String> banned = null;
-	private static Map<String, String> toKick = null;
+	private static List<String> banned = null; //TODO: Remove this on player leave
 	private String name = null;
 	private int maxPing = 135;
 	
 	public AntiCheatBase() {
 		banned = new ArrayList<String>();
-		toKick = new HashMap<String, String>();
+		new BlocksPerSecondLogger();
 		new InvisibleFireGlitchFix();
 		new FastBowFix();
 		new AutoCritFix();
@@ -50,21 +50,6 @@ public class AntiCheatBase {
 		new SpamBotFix();
 		new WaterWalkDetection();
 		new AutoClicker();
-		Bukkit.getScheduler().runTaskTimer(OSTB.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				Iterator<String> iterator = toKick.keySet().iterator();
-				while(iterator.hasNext()) {
-					String name = iterator.next();
-					banned.remove(name);
-					Player player = ProPlugin.getPlayer(name);
-					if(player != null) {
-						player.kickPlayer(toKick.get(name));
-					}
-					iterator.remove();
-				}
-			}
-		}, 20, 20);
 	}
 	
 	public AntiCheatBase(String name) {
@@ -95,7 +80,6 @@ public class AntiCheatBase {
 	public void kick(Player player, String action) {
 		String message = StringUtil.color("&bAnti Cheat: &f" + player.getName() + " &chas been &4" + action + "&c: \"&e" + this.name + "&c\"");
 		MessageHandler.alert(message);
-		toKick.put(player.getName(), message);
 	}
 	
 	public void ban(Player player) {

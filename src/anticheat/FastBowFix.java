@@ -8,17 +8,17 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
+import ostb.OSTB;
 import ostb.customevents.TimeEvent;
 import ostb.customevents.player.AsyncPlayerLeaveEvent;
 import ostb.server.DB;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
-public class FastBowFix extends AntiCheatBase implements Listener {
+public class FastBowFix extends AntiCheatBase {
 	private Map<String, Integer> timesFired = null;
 	private Map<String, List<Integer>> loggings = null;
 	
@@ -83,7 +83,7 @@ public class FastBowFix extends AntiCheatBase implements Listener {
 					average += shots;
 				}
 				if(average > 0) {
-					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "'");
+					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "', '" + OSTB.getServerName() + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();

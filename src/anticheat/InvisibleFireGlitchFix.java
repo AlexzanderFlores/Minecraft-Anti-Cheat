@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import ostb.gameapi.SpectatorHandler;
 import ostb.server.util.EventUtil;
 
-
 @SuppressWarnings("deprecation")
 public class InvisibleFireGlitchFix implements Listener {
 	private List<Material> blocked = null;

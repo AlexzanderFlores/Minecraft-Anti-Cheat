@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -26,8 +25,7 @@ import ostb.server.DB;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
-
-public class SpeedFix extends AntiCheatBase implements Listener {
+public class SpeedFix extends AntiCheatBase {
 	private Map<String, Location> lastLocations = null;
 	private Map<String, Integer> counters = null;
 	private Map<String, Integer> disabledCounters = null;
@@ -74,13 +72,7 @@ public class SpeedFix extends AntiCheatBase implements Listener {
 							from = lastLocations.get(player.getName());
 						}
 						Location to = player.getLocation();
-						double x1 = to.getX();
-						double y1 = to.getY();
-						double z1 = to.getZ();
-						double x2 = from.getX();
-						double y2 = from.getY();
-						double z2 = from.getZ();
-						double distance = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+						double distance = to.distance(from);
 						speeds.put(player.getName(), distance);
 						if(!player.getAllowFlight() && !player.isFlying() && player.getVehicle() == null && to.getWorld().getName().equals(from.getWorld().getName()) && !player.hasPotionEffect(PotionEffectType.SPEED)) {
 							if(to.getY() >= from.getY() && !disabledCounters.containsKey(player.getName()) && notIgnored(player) && (to.getX() != from.getX() || to.getY() != from.getY() || to.getZ() != from.getZ())) {

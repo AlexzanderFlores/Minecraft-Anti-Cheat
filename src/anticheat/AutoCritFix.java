@@ -5,13 +5,12 @@ import java.util.Map;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import ostb.customevents.TimeEvent;
 import ostb.server.util.EventUtil;
 
-public class AutoCritFix extends AntiCheatBase implements Listener {
+public class AutoCritFix extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public AutoCritFix() {

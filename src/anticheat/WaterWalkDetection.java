@@ -7,14 +7,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import ostb.customevents.TimeEvent;
 import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
-public class WaterWalkDetection extends AntiCheatBase implements Listener {
+public class WaterWalkDetection extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public WaterWalkDetection() {

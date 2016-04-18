@@ -9,7 +9,6 @@ import ostb.player.account.AccountHandler.Ranks;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
 
-
 public class SpamBotFix implements Listener {
 	public SpamBotFix() {
 		EventUtil.register(this);

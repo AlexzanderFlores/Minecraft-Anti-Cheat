@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import anticheat.AntiCheatBase;
@@ -18,7 +17,7 @@ import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class AttackThroughWalls extends AntiCheatBase implements Listener {
+public class AttackThroughWalls extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public AttackThroughWalls() {

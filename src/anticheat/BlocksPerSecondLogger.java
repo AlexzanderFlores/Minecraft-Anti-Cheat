@@ -6,40 +6,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.Listener;
 
 import ostb.OSTB;
+import ostb.customevents.TimeEvent;
 import ostb.customevents.player.AsyncPlayerLeaveEvent;
 import ostb.server.DB;
 import ostb.server.util.EventUtil;
 
-public class AttackDistanceLogger extends AntiCheatBase {
+public class BlocksPerSecondLogger implements Listener {
+	private Map<String, Location> lastLocations = null;
 	private Map<String, List<Double>> loggings = null;
 	
-	public AttackDistanceLogger() {
-		super("Reach");
+	public BlocksPerSecondLogger() {
+		lastLocations = new HashMap<String, Location>();
 		loggings = new HashMap<String, List<Double>>();
 		EventUtil.register(this);
 	}
 	
 	@EventHandler
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-			Player player = (Player) event.getEntity();
-			Player damager = (Player) event.getDamager();
-			Location playerLocation = player.getLocation();
-			Location damagerLocation = damager.getLocation();
-			double distance = playerLocation.distance(damagerLocation);
-			if(distance > 4.5d) {
-				List<Double> logging = loggings.get(damager.getName());
+	public void onTime(TimeEvent event) {
+		long ticks = event.getTicks();
+		if(ticks == 20) {
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				String name = player.getName();
+				Location pLoc = player.getLocation();
+				Location lLoc = pLoc;
+				if(lastLocations.containsKey(name)) {
+					lLoc = lastLocations.get(name);
+				}
+				double distance = pLoc.distance(lLoc);
+				List<Double> logging = loggings.get(name);
 				if(logging == null) {
 					logging = new ArrayList<Double>();
 				}
 				logging.add(distance);
-				loggings.put(damager.getName(), logging);
+				loggings.put(name, logging);
+				Bukkit.getLogger().info("ANTI CHEAT: " + name + " distance: " + distance);
 			}
 		}
 	}
@@ -47,16 +54,16 @@ public class AttackDistanceLogger extends AntiCheatBase {
 	@EventHandler
 	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
 		String name = event.getName();
-		UUID uuid = event.getUUID();
 		if(loggings.containsKey(name)) {
+			UUID uuid = event.getUUID();
 			List<Double> logging = loggings.get(name);
 			if(logging != null) {
-				double average = 0.0d;
+				double average = 0;
 				for(double distance : logging) {
 					average += distance;
 				}
 				if(average > 0) {
-					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "', '" + OSTB.getServerName() + "'");
+					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + average + "', '" + OSTB.getServerName() + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();

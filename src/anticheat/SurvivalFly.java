@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -25,7 +24,7 @@ import ostb.server.PerformanceHandler;
 import ostb.server.tasks.AsyncDelayedTask;
 import ostb.server.util.EventUtil;
 
-public class SurvivalFly extends AntiCheatBase implements Listener {
+public class SurvivalFly extends AntiCheatBase {
 	private Map<String, Integer> heightIncreasing = null;
 	private Map<String, Integer> wouldBan = null;
 	private Map<String, Integer> disabledCounters = null;

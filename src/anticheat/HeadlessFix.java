@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import ostb.customevents.player.PlayerLeaveEvent;
 import ostb.server.util.EventUtil;
 
-
-public class HeadlessFix extends AntiCheatBase implements Listener {
+public class HeadlessFix extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public HeadlessFix() {
