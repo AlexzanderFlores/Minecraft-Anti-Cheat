@@ -2,10 +2,7 @@ package anticheat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -16,8 +13,6 @@ import org.bukkit.event.Listener;
 import anticheat.killaura.AttackThroughWalls;
 import anticheat.killaura.InventoryKillAuraDetection;
 import ostb.OSTB;
-import ostb.OSTB.Plugins;
-import ostb.ProPlugin;
 import ostb.customevents.player.PlayerBanEvent;
 import ostb.gameapi.SpectatorHandler;
 import ostb.player.MessageHandler;
@@ -45,7 +40,8 @@ public class AntiCheatBase implements Listener {
 		new AttackDistanceLogger();
 		//new SpeedFix();
 		new SpeedFix2();
-		new SurvivalFly();
+		//new SurvivalFly();
+		new FlyFix();
 		new InventoryKillAuraDetection();
 		new HeadlessFix();
 		new SpamBotFix();

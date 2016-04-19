@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import anticheat.events.BPSEvent;
@@ -22,7 +23,6 @@ import ostb.customevents.player.AsyncPlayerLeaveEvent;
 import ostb.server.DB;
 import ostb.server.tasks.DelayedTask;
 import ostb.server.util.EventUtil;
-import ostb.server.util.TimeUtil;
 
 public class SpeedFix2 extends AntiCheatBase {
 	private Map<String, Integer> disabled = null;
@@ -73,6 +73,11 @@ public class SpeedFix2 extends AntiCheatBase {
 		}
 	}
 	
+	//@EventHandler
+	public void onPlayerVelocity(PlayerVelocityEvent event) {
+		//TODO: Add a delay based off of event.getVelocity()
+	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
 		if(!event.isCancelled() && event.getEntity() instanceof Player) {
@@ -88,8 +93,8 @@ public class SpeedFix2 extends AntiCheatBase {
 		if(banned.contains(name)) {
 			return;
 		}
-		if(!player.getAllowFlight() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED) && !disabled.containsKey(name) && notIgnored(player) && !badBlockDelay.contains(name)) {
-			if(!badBlockDelay.contains(name) && !damageDelays.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
+		if(!player.getAllowFlight() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED) && !disabled.containsKey(name)) {
+			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !damageDelays.containsKey(name)) {
 				Location location = player.getLocation();
 				for(int a = -2; a <= 0; ++a) {
 					Block block = location.getBlock().getRelative(0, a, 0);
@@ -131,7 +136,7 @@ public class SpeedFix2 extends AntiCheatBase {
 						if(this.ticks - ticks <= 120) {
 							if(++recent >= 2) {
 								banned.add(name);
-								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + "', 'Speed2', '" + TimeUtil.getTime() + ", " + OSTB.getServerName() + "'");
+								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + " " + distance + " " + OSTB.getServerName() + "'");
 								return;
 							}
 						}
