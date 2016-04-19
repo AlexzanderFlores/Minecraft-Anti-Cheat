@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,9 +16,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import anticheat.events.BPSEvent;
+import ostb.OSTB;
 import ostb.customevents.TimeEvent;
+import ostb.customevents.player.AsyncPlayerLeaveEvent;
+import ostb.server.DB;
 import ostb.server.tasks.DelayedTask;
 import ostb.server.util.EventUtil;
+import ostb.server.util.TimeUtil;
 
 public class SpeedFix2 extends AntiCheatBase {
 	private Map<String, Integer> disabled = null;
@@ -54,8 +57,7 @@ public class SpeedFix2 extends AntiCheatBase {
 					damageDelays.put(name, counter);
 				}
 			}
-		}
-		if(ticks == 20) {
+		} else if(ticks == 20) {
 			Iterator<String> iterator = disabled.keySet().iterator();
 			while(iterator.hasNext()) {
 				String name = iterator.next();
@@ -97,13 +99,11 @@ public class SpeedFix2 extends AntiCheatBase {
 									}
 								}, 20 * 2);
 							}
-							Bukkit.broadcastMessage("Ignoring " + name + " (On bad block)");
 							return;
 						}
 					}
 				}
 				if(location.getBlock().getRelative(0, 2, 0).getType() != Material.AIR) {
-					Bukkit.broadcastMessage("Ignoring " + name + " (Block above)");
 					return;
 				}
 				double distance = event.getDistance();
@@ -125,14 +125,35 @@ public class SpeedFix2 extends AntiCheatBase {
 					for(long ticks : violation) {
 						if(this.ticks - ticks <= 120) {
 							if(++recent >= 2) {
-								Bukkit.broadcastMessage("ANTI CHEAT: " + name + " BANNED");
+								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + "', 'Speed2', '" + TimeUtil.getTime() + ", " + OSTB.getServerName() + "'");
 								return;
 							}
 						}
 					}
-					Bukkit.broadcastMessage("ANTI CHEAT: " + name + " is moving too fast (" + ((int) distance) + ") VL " + violation.size() + " VLR " + recent);
 				}
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
+		String name = event.getName();
+		if(violations.containsKey(name)) {
+			//UUID uuid = event.getUUID();
+			List<Long> loggings = violations.get(name);
+			if(loggings != null) {
+				/*int average = 0;
+				for(long logging : loggings) {
+					average += logging;
+				}
+				if(average > 0) {
+					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "', '" + OSTB.getServerName() + "'");
+				}*/
+				violations.get(name).clear();
+				loggings.clear();
+				loggings = null;
+			}
+			violations.remove(name);
 		}
 	}
 }
