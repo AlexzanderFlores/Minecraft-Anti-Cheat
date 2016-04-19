@@ -29,6 +29,7 @@ public class SpeedFix2 extends AntiCheatBase {
 	private Map<String, List<Long>> violations = null;
 	private Map<String, Integer> damageDelays = null;
 	private List<String> badBlockDelay = null;
+	private List<String> banned = null;
 	private String [] badBlocks = null;
 	private long ticks = 0;
 	
@@ -38,6 +39,7 @@ public class SpeedFix2 extends AntiCheatBase {
 		violations = new HashMap<String, List<Long>>();
 		damageDelays = new HashMap<String, Integer>();
 		badBlockDelay = new ArrayList<String>();
+		banned = new ArrayList<String>();
 		badBlocks = new String [] {"STAIR", "SLAB", "ICE"};
 		EventUtil.register(this);
 	}
@@ -83,8 +85,11 @@ public class SpeedFix2 extends AntiCheatBase {
 	public void onBPS(BPSEvent event) {
 		Player player = event.getPlayer();
 		final String name = player.getName();
+		if(banned.contains(name)) {
+			return;
+		}
 		if(!player.getAllowFlight() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED) && !disabled.containsKey(name) && notIgnored(player) && !badBlockDelay.contains(name)) {
-			if(!badBlockDelay.contains(name) && !damageDelays.containsKey(name) /*&& player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f*/) {
+			if(!badBlockDelay.contains(name) && !damageDelays.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
 				Location location = player.getLocation();
 				for(int a = -2; a <= 0; ++a) {
 					Block block = location.getBlock().getRelative(0, a, 0);
@@ -125,6 +130,7 @@ public class SpeedFix2 extends AntiCheatBase {
 					for(long ticks : violation) {
 						if(this.ticks - ticks <= 120) {
 							if(++recent >= 2) {
+								banned.add(name);
 								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + "', 'Speed2', '" + TimeUtil.getTime() + ", " + OSTB.getServerName() + "'");
 								return;
 							}
@@ -155,5 +161,6 @@ public class SpeedFix2 extends AntiCheatBase {
 			}
 			violations.remove(name);
 		}
+		banned.remove(name);
 	}
 }
