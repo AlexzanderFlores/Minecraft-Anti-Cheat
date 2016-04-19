@@ -94,7 +94,7 @@ public class SpeedFix2 extends AntiCheatBase {
 			return;
 		}
 		if(!player.getAllowFlight() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED) && !disabled.containsKey(name)) {
-			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !damageDelays.containsKey(name)) {
+			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !damageDelays.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
 				Location location = player.getLocation();
 				for(int a = -2; a <= 0; ++a) {
 					Block block = location.getBlock().getRelative(0, a, 0);
@@ -117,13 +117,7 @@ public class SpeedFix2 extends AntiCheatBase {
 					return;
 				}
 				double distance = event.getDistance();
-				boolean sprinting = player.isSprinting();
-				double max = 0;
-				if(sprinting) {
-					max = 7.5;
-				} else {
-					max= 4.5;
-				}
+				double max = 7.5;
 				if(distance > max) {
 					List<Long> violation = violations.get(name);
 					if(violation == null) {
@@ -136,7 +130,7 @@ public class SpeedFix2 extends AntiCheatBase {
 						if(this.ticks - ticks <= 120) {
 							if(++recent >= 2) {
 								banned.add(name);
-								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + " " + distance + " " + OSTB.getServerName() + "'");
+								DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + " " + distance + " " + OSTB.getServerName() + " v2.0'");
 								return;
 							}
 						}

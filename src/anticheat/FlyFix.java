@@ -81,7 +81,7 @@ public class FlyFix extends AntiCheatBase {
 						counter = floating.get(player.getName());
 					}
 					if(++counter >= 2) {
-						Bukkit.broadcastMessage("ANTI CHEAT: " + player.getName() + " floating too long");
+						Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " floating too long");
 					} else {
 						floating.put(player.getName(), counter);
 					}
@@ -107,7 +107,7 @@ public class FlyFix extends AntiCheatBase {
 			return;
 		}
 		if(checkForFly(player) && !onEdgeOfBlock(player)) {
-			Bukkit.broadcastMessage("ANTI CHEAT: " + player.getName() + " is flying");
+			Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " is flying");
 		}
 	}
 }
