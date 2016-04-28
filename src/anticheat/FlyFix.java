@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import net.md_5.bungee.api.ChatColor;
 import ostb.customevents.TimeEvent;
 import ostb.server.PerformanceHandler;
 import ostb.server.util.EventUtil;
@@ -21,11 +22,13 @@ import ostb.server.util.EventUtil;
 public class FlyFix extends AntiCheatBase {
 	private Map<String, Integer> delays = null;
 	private Map<String, Integer> floating = null;
+	private Map<String, Integer> flying = null;
 	
 	public FlyFix() {
 		super("Fly");
 		delays = new HashMap<String, Integer>();
 		floating = new HashMap<String, Integer>();
+		flying = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
@@ -34,7 +37,7 @@ public class FlyFix extends AntiCheatBase {
 	}
 	
 	private boolean checkForFly(Player player) {
-		if(PerformanceHandler.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && /*!player.getAllowFlight() &&*/ player.getVehicle() == null) {
+		if(PerformanceHandler.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.isFlying() && player.getVehicle() == null) {
 			if(notIgnored(player) && !delays.containsKey(player.getName()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
 				return true;
 			}
@@ -81,7 +84,8 @@ public class FlyFix extends AntiCheatBase {
 						counter = floating.get(player.getName());
 					}
 					if(++counter >= 2) {
-						Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " floating too long");
+						//player.kickPlayer("Floating too long (Send this to leet)");
+						player.sendMessage(ChatColor.RED + "KICKED FOR FLOATING (TELL LEET THIS)");
 					} else {
 						floating.put(player.getName(), counter);
 					}
@@ -102,12 +106,28 @@ public class FlyFix extends AntiCheatBase {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
 		Location from = event.getFrom();
-		if(to.getY() < from.getY()) {
-			floating.put(player.getName(), -1);
+		if(to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player)) {
+			int counter = 0;
+			if(flying.containsKey(player.getName())) {
+				counter = flying.get(player.getName());
+			}
+			if(++counter >= 10) {
+				//player.kickPlayer("Flying (Send this to leet)");
+				player.sendMessage(ChatColor.RED + "KICKED FOR FLY (TELL LEET THIS)");
+			} else {
+				flying.put(player.getName(), counter);
+			}
+			player.sendMessage("Flying counter: " + counter + " (Tell leet this)");
 			return;
 		}
-		if(checkForFly(player) && !onEdgeOfBlock(player)) {
-			Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " is flying");
+		floating.put(player.getName(), -1);
+		if(flying.containsKey(player.getName())) {
+			int counter = flying.get(player.getName()) - 1;
+			if(counter <= 0) {
+				flying.remove(player.getName());
+			} else {
+				flying.put(player.getName(), counter);
+			}
 		}
 	}
 }
