@@ -5,15 +5,13 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import ostb.gameapi.SpectatorHandler;
-import ostb.server.util.EventUtil;
+import anticheat.util.EventUtil;
 
 @SuppressWarnings("deprecation")
 public class InvisibleFireGlitchFix implements Listener {
@@ -70,8 +68,7 @@ public class InvisibleFireGlitchFix implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		if(!event.isCancelled() && SpectatorHandler.contains(player) && !SpectatorHandler.contains(player) && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if(!event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if(event.getItem() != null && event.getItem().getType() == Material.FLINT_AND_STEEL) {
 				if(blocked.contains(event.getClickedBlock().getType()) || event.getClickedBlock().getTypeId() == 109 || event.getClickedBlock().getTypeId() == 102) {
 					event.setCancelled(true);
@@ -82,7 +79,7 @@ public class InvisibleFireGlitchFix implements Listener {
 	
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if(!event.isCancelled() && !SpectatorHandler.contains(event.getPlayer())) {
+		if(!event.isCancelled()) {
 			Block above = event.getBlock().getRelative(0, 1, 0);
 			Material material = event.getBlock().getType();
 			if((material == Material.LONG_GRASS || material == Material.DEAD_BUSH) && above.getType() == Material.FIRE) {

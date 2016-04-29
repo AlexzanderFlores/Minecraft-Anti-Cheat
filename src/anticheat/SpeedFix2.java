@@ -13,18 +13,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import anticheat.events.BPSEvent;
+import anticheat.util.AsyncPlayerLeaveEvent;
+import anticheat.util.BPSEvent;
+import anticheat.util.DelayedTask;
+import anticheat.util.EventUtil;
+import anticheat.util.TimeEvent;
 import net.md_5.bungee.api.ChatColor;
-import ostb.ProPlugin;
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.AsyncPlayerLeaveEvent;
-import ostb.server.tasks.DelayedTask;
-import ostb.server.util.EventUtil;
 
 public class SpeedFix2 extends AntiCheatBase {
 	private Map<String, List<Long>> violations = null;
@@ -58,10 +58,6 @@ public class SpeedFix2 extends AntiCheatBase {
 				} else {
 					delay.put(name, counter);
 				}
-				Player player = ProPlugin.getPlayer(name);
-				if(player != null) {
-					player.setLevel(counter);
-				}
 			}
 		}
 	}
@@ -94,6 +90,16 @@ public class SpeedFix2 extends AntiCheatBase {
 	}
 	
 	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		Location to = event.getTo();
+		Block below = to.getBlock().getRelative(0, -1, 0);
+		if(to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
+			delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
+		}
+	}
+	
+	@EventHandler
 	public void onBPS(BPSEvent event) {
 		Player player = event.getPlayer();
 		final String name = player.getName();
@@ -101,7 +107,7 @@ public class SpeedFix2 extends AntiCheatBase {
 			return;
 		}
 		if(!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED)) {
-			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !delay.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
+			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !delay.containsKey(name) && player.getWalkSpeed() == 0.2f) {
 				Location location = player.getLocation();
 				for(int a = -2; a <= 0; ++a) {
 					Block block = location.getBlock().getRelative(0, a, 0);

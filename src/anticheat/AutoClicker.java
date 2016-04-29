@@ -12,11 +12,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import ostb.OSTB;
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.AsyncPlayerLeaveEvent;
-import ostb.server.DB;
-import ostb.server.util.EventUtil;
+import anticheat.util.AsyncPlayerLeaveEvent;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
+import anticheat.util.TimeEvent;
 
 public class AutoClicker extends AntiCheatBase {
 	private Map<String, Integer> clicks = null;
@@ -77,7 +76,7 @@ public class AutoClicker extends AntiCheatBase {
 					average += cps;
 				}
 				if(average > 0) {
-					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "', '" + OSTB.getServerName() + "'");
+					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();

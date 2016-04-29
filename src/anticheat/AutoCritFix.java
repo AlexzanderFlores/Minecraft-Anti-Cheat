@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import ostb.customevents.TimeEvent;
-import ostb.server.util.EventUtil;
+import anticheat.util.EventUtil;
+import anticheat.util.TimeEvent;
 
 public class AutoCritFix extends AntiCheatBase {
 	private Map<String, Integer> counters = null;

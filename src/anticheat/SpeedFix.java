@@ -18,12 +18,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.AsyncPlayerLeaveEvent;
-import ostb.customevents.player.PlayerLeaveEvent;
-import ostb.server.DB;
-import ostb.server.PerformanceHandler;
-import ostb.server.util.EventUtil;
+import anticheat.util.AsyncPlayerLeaveEvent;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
+import anticheat.util.TimeEvent;
+import anticheat.util.Timer;
 
 public class SpeedFix extends AntiCheatBase {
 	private Map<String, Location> lastLocations = null;
@@ -66,7 +66,7 @@ public class SpeedFix extends AntiCheatBase {
 					}
 				}
 				for(Player player : Bukkit.getOnlinePlayers()) {
-					if(PerformanceHandler.getPing(player) < getMaxPing()) {
+					if(Timer.getPing(player) < getMaxPing()) {
 						Location from = player.getLocation();
 						if(lastLocations.containsKey(player.getName())) {
 							from = lastLocations.get(player.getName());

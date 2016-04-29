@@ -11,10 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import ostb.OSTB;
-import ostb.customevents.player.AsyncPlayerLeaveEvent;
-import ostb.server.DB;
-import ostb.server.util.EventUtil;
+import anticheat.util.AsyncPlayerLeaveEvent;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
 
 public class AttackDistanceLogger extends AntiCheatBase {
 	private Map<String, List<Double>> loggings = null;
@@ -56,7 +55,7 @@ public class AttackDistanceLogger extends AntiCheatBase {
 					average += distance;
 				}
 				if(average > 0) {
-					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "', '" + OSTB.getServerName() + "'");
+					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();

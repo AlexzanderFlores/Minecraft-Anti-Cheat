@@ -17,12 +17,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.PlayerLeaveEvent;
-import ostb.player.MessageHandler;
-import ostb.server.PerformanceHandler;
-import ostb.server.tasks.AsyncDelayedTask;
-import ostb.server.util.EventUtil;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.EventUtil;
+import anticheat.util.MessageHandler;
+import anticheat.util.PlayerLeaveEvent;
+import anticheat.util.TimeEvent;
+import anticheat.util.Timer;
 
 public class SurvivalFly extends AntiCheatBase {
 	private Map<String, Integer> heightIncreasing = null;
@@ -64,7 +64,7 @@ public class SurvivalFly extends AntiCheatBase {
 					@Override
 					public void run() {
 						for(Player player : Bukkit.getOnlinePlayers()) {
-							if(PerformanceHandler.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
+							if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
 								if(notIgnored(player) && !disabledCounters.containsKey(player.getName()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
 									Location location = player.getLocation();
 									int blocks = 0;
@@ -114,7 +114,7 @@ public class SurvivalFly extends AntiCheatBase {
 			if(event.getTo().getY() < event.getFrom().getY()) {
 				floating.remove(player.getName());
 			}
-			if(PerformanceHandler.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
+			if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
 				if(notIgnored(player) && !disabledCounters.containsKey(player.getName()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
 					for(int y = 0; y >= -2; --y) {
 						for(int x = 2; x >= -2; --x) {

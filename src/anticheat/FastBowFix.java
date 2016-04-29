@@ -11,12 +11,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
-import ostb.OSTB;
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.AsyncPlayerLeaveEvent;
-import ostb.server.DB;
-import ostb.server.PerformanceHandler;
-import ostb.server.util.EventUtil;
+import anticheat.util.AsyncPlayerLeaveEvent;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
+import anticheat.util.TimeEvent;
+import anticheat.util.Timer;
 
 public class FastBowFix extends AntiCheatBase {
 	private Map<String, Integer> timesFired = null;
@@ -43,7 +42,7 @@ public class FastBowFix extends AntiCheatBase {
 	public void onEntityShootBow(EntityShootBowEvent event) {
 		if(isEnabled() && event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
-			if(PerformanceHandler.getPing(player) < getMaxPing()) {
+			if(Timer.getPing(player) < getMaxPing()) {
 				Vector velocity = event.getProjectile().getVelocity();
 				double x = velocity.getX() < 0 ? velocity.getX() * -1 : velocity.getX();
 				double z = velocity.getZ() < 0 ? velocity.getZ() * -1 : velocity.getZ();
@@ -83,7 +82,7 @@ public class FastBowFix extends AntiCheatBase {
 					average += shots;
 				}
 				if(average > 0) {
-					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "', '" + OSTB.getServerName() + "'");
+					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "'");
 				}
 				loggings.get(name).clear();
 				logging.clear();

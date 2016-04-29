@@ -16,10 +16,10 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import anticheat.util.EventUtil;
+import anticheat.util.TimeEvent;
+import anticheat.util.Timer;
 import net.md_5.bungee.api.ChatColor;
-import ostb.customevents.TimeEvent;
-import ostb.server.PerformanceHandler;
-import ostb.server.util.EventUtil;
 
 public class FlyFix extends AntiCheatBase {
 	private Map<String, Integer> delay = null;
@@ -35,8 +35,8 @@ public class FlyFix extends AntiCheatBase {
 	}
 	
 	private boolean checkForFly(Player player) {
-		if(PerformanceHandler.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.isFlying() && player.getVehicle() == null) {
-			if(notIgnored(player) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
+		if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.isFlying() && player.getVehicle() == null) {
+			if(notIgnored(player) && !player.hasPotionEffect(PotionEffectType.JUMP) && player.getWalkSpeed() == 0.2f) {
 				return true;
 			}
 		}

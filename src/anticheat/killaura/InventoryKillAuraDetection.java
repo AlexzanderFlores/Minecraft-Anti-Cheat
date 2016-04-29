@@ -14,12 +14,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import anticheat.AntiCheatBase;
-import ostb.OSTB;
-import ostb.OSTB.Plugins;
-import ostb.customevents.TimeEvent;
-import ostb.customevents.player.PlayerLeaveEvent;
-import ostb.server.PerformanceHandler;
-import ostb.server.util.EventUtil;
+import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
+import anticheat.util.TimeEvent;
+import anticheat.util.Timer;
 
 public class InventoryKillAuraDetection extends AntiCheatBase {
 	private boolean hub = false;
@@ -30,14 +28,10 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	
 	public InventoryKillAuraDetection() {
 		super("Kill Aura");
-		Plugins plugin = OSTB.getPlugin();
-		hub = plugin == Plugins.HUB;
-		if(hub) {
-			attacksPerSecond = new HashMap<String, Integer>();
-			spawningLocation = new HashMap<String, Location>();
-			secondsLived = new HashMap<String, Integer>();
-			EventUtil.register(this);
-		}
+		attacksPerSecond = new HashMap<String, Integer>();
+		spawningLocation = new HashMap<String, Location>();
+		secondsLived = new HashMap<String, Integer>();
+		EventUtil.register(this);
 	}
 	
 	private int getSecondsLived(Player player) {
@@ -45,17 +39,16 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	}
 	
 	private boolean ableToCheck(Player player) {
-		//int seconds = getSecondsLived(player);
-		//return hub ? seconds < maxSeconds : seconds > 1 && seconds < maxSeconds;
-		return true;
+		int seconds = getSecondsLived(player);
+		return hub ? seconds < maxSeconds : seconds > 1 && seconds < maxSeconds;
 	}
 	
 	@EventHandler
 	public void onInventoryOpen(InventoryOpenEvent event) {
 		if(isEnabled() && event.getPlayer() instanceof Player) {
 			Player player = (Player) event.getPlayer();
-			int ping = PerformanceHandler.getPing(player);
-			boolean pingOk = /*ping > 0 && */ping < 100;
+			int ping = Timer.getPing(player);
+			boolean pingOk = ping > 0 && ping < 100;
 			if(player.getLocation().getBlock().getRelative(0, -1, 0).getType() != Material.AIR && ableToCheck(player) && notIgnored(player) && pingOk) {
 				if(hub && spawningLocation.containsKey(player.getName())) {
 					double x1 = player.getLocation().getX();
@@ -77,7 +70,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 				} else {
 					attacksPerSecond.put(player.getName(), attacks);
 				}
-			} else if(PerformanceHandler.getPing(player) > getMaxPing()) {
+			} else if(Timer.getPing(player) > getMaxPing()) {
 				attacksPerSecond.remove(player.getName());
 			}
 		}
