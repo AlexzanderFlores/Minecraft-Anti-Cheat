@@ -41,10 +41,8 @@ public class AutoCritFix extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20 * 2) {
-			if(isEnabled()) {
-				counters.clear();
-			}
+		if(ticks == 20 * 2 && isEnabled()) {
+			counters.clear();
 		}
 	}
 }

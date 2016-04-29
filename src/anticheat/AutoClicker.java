@@ -30,10 +30,8 @@ public class AutoClicker extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20) {
-			if(isEnabled()) {
-				clicks.clear();
-			}
+		if(ticks == 20 && isEnabled()) {
+			clicks.clear();
 		}
 	}
 	
@@ -65,24 +63,26 @@ public class AutoClicker extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		Player player = event.getPlayer();
-		String name = player.getName();
-		if(loggings.containsKey(name)) {
-			UUID uuid = player.getUniqueId();
-			List<Integer> logging = loggings.get(name);
-			if(logging != null) {
-				int average = 0;
-				for(int cps : logging) {
-					average += cps;
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			String name = player.getName();
+			if(loggings.containsKey(name)) {
+				UUID uuid = player.getUniqueId();
+				List<Integer> logging = loggings.get(name);
+				if(logging != null) {
+					int average = 0;
+					for(int cps : logging) {
+						average += cps;
+					}
+					if(average > 0) {
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + (average / logging.size()));
+					}
+					loggings.get(name).clear();
+					logging.clear();
+					logging = null;
 				}
-				if(average > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + (average / logging.size()));
-				}
-				loggings.get(name).clear();
-				logging.clear();
-				logging = null;
+				loggings.remove(name);
 			}
-			loggings.remove(name);
 		}
 	}
 }

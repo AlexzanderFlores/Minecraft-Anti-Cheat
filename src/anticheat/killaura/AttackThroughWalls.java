@@ -51,13 +51,15 @@ public class AttackThroughWalls extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20 * 5) {
+		if(ticks == 20 * 5 && isEnabled()) {
 			counters.clear();
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		counters.remove(event.getPlayer().getName());
+		if(isEnabled()) {
+			counters.remove(event.getPlayer().getName());
+		}
 	}
 }

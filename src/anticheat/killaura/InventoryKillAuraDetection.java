@@ -20,7 +20,6 @@ import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 
 public class InventoryKillAuraDetection extends AntiCheatBase {
-	private boolean hub = false;
 	private Map<String, Integer> attacksPerSecond = null;
 	private Map<String, Location> spawningLocation = null;
 	private Map<String, Integer> secondsLived = null;
@@ -35,12 +34,12 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	}
 	
 	private int getSecondsLived(Player player) {
-		return hub ? player.getTicksLived() / 20 : secondsLived.get(player.getName());
+		return secondsLived.get(player.getName());
 	}
 	
 	private boolean ableToCheck(Player player) {
 		int seconds = getSecondsLived(player);
-		return hub ? seconds < maxSeconds : seconds > 1 && seconds < maxSeconds;
+		return seconds > 1 && seconds < maxSeconds;
 	}
 	
 	@EventHandler
@@ -50,7 +49,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 			int ping = Timer.getPing(player);
 			boolean pingOk = ping > 0 && ping < 100;
 			if(player.getLocation().getBlock().getRelative(0, -1, 0).getType() != Material.AIR && ableToCheck(player) && notIgnored(player) && pingOk) {
-				if(hub && spawningLocation.containsKey(player.getName())) {
+				if(spawningLocation.containsKey(player.getName())) {
 					double x1 = player.getLocation().getX();
 					double z1 = player.getLocation().getZ();
 					double x2 = spawningLocation.get(player.getName()).getX();
@@ -87,14 +86,12 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20) {
-			if(isEnabled()) {
-				attacksPerSecond.clear();
-				for(Player player : Bukkit.getOnlinePlayers()) {
-					secondsLived.put(player.getName(), secondsLived.get(player.getName()) + 1);
-					if(getSecondsLived(player) >= maxSeconds && spawningLocation.containsKey(player.getName())) {
-						spawningLocation.remove(player.getName());
-					}
+		if(ticks == 20 && isEnabled()) {
+			attacksPerSecond.clear();
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				secondsLived.put(player.getName(), secondsLived.get(player.getName()) + 1);
+				if(getSecondsLived(player) >= maxSeconds && spawningLocation.containsKey(player.getName())) {
+					spawningLocation.remove(player.getName());
 				}
 			}
 		}
@@ -103,12 +100,8 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		if(isEnabled()) {
-			if(hub) {
-				PlayerRespawnEvent.getHandlerList().unregister(this);
-			} else if(event.getPlayer() != null) {
-				secondsLived.put(event.getPlayer().getName(), 0);
-				spawningLocation.put(event.getPlayer().getName(), event.getRespawnLocation());
-			}
+			secondsLived.put(event.getPlayer().getName(), 0);
+			spawningLocation.put(event.getPlayer().getName(), event.getRespawnLocation());
 		}
 	}
 	

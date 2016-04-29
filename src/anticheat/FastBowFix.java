@@ -31,10 +31,8 @@ public class FastBowFix extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20) {
-			if(isEnabled()) {
-				timesFired.clear();
-			}
+		if(ticks == 20 && isEnabled()) {
+			timesFired.clear();
 		}
 	}
 	
@@ -72,24 +70,26 @@ public class FastBowFix extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		Player player = event.getPlayer();
-		String name = player.getName();
-		UUID uuid = player.getUniqueId();
-		if(loggings.containsKey(name)) {
-			List<Integer> logging = loggings.get(name);
-			if(logging != null) {
-				int average = 0;
-				for(int shots : logging) {
-					average += shots;
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			String name = player.getName();
+			UUID uuid = player.getUniqueId();
+			if(loggings.containsKey(name)) {
+				List<Integer> logging = loggings.get(name);
+				if(logging != null) {
+					int average = 0;
+					for(int shots : logging) {
+						average += shots;
+					}
+					if(average > 0) {
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + (average / loggings.size()));
+					}
+					loggings.get(name).clear();
+					logging.clear();
+					logging = null;
 				}
-				if(average > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + (average / loggings.size()));
-				}
-				loggings.get(name).clear();
-				logging.clear();
-				logging = null;
+				loggings.remove(name);
 			}
-			loggings.remove(name);
 		}
 	}
 }

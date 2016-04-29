@@ -25,10 +25,8 @@ public class WaterWalkDetection extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20) {
-			if(isEnabled()) {
-				counters.clear();
-			}
+		if(ticks == 20 && isEnabled()) {
+			counters.clear();
 		}
 	}
 	
@@ -53,6 +51,8 @@ public class WaterWalkDetection extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		counters.remove(event.getPlayer().getName());
+		if(isEnabled()) {
+			counters.remove(event.getPlayer().getName());
+		}
 	}
 }

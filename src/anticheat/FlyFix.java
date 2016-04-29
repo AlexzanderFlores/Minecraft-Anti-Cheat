@@ -63,7 +63,7 @@ public class FlyFix extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 1) {
+		if(ticks == 1 && isEnabled()) {
 			Iterator<String> iterator = delay.keySet().iterator();
 			while(iterator.hasNext()) {
 				String name = iterator.next();
@@ -74,7 +74,7 @@ public class FlyFix extends AntiCheatBase {
 					delay.put(name, counter);
 				}
 			}
-		} else if(ticks == 20) {
+		} else if(ticks == 20 && isEnabled()) {
 			for(Player player : Bukkit.getOnlinePlayers()) {
 				if(!delay.containsKey(player.getName()) && checkForFly(player) && !onEdgeOfBlock(player)) {
 					int counter = 0;
@@ -96,51 +96,57 @@ public class FlyFix extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerVelocity(PlayerVelocityEvent event) {
-		Player player = event.getPlayer();
-		Vector vel = player.getVelocity();
-		double x = vel.getX() < 0 ? vel.getX() * -1 : vel.getX();
-		double y = vel.getY() < 0 ? vel.getY() * -1 : vel.getY();
-		double z = vel.getZ() < 0 ? vel.getZ() * -1 : vel.getZ();
-		double value = x + y + z;
-		delay.put(player.getName(), ((int) value * 5));
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			Vector vel = player.getVelocity();
+			double x = vel.getX() < 0 ? vel.getX() * -1 : vel.getX();
+			double y = vel.getY() < 0 ? vel.getY() * -1 : vel.getY();
+			double z = vel.getZ() < 0 ? vel.getZ() * -1 : vel.getZ();
+			double value = x + y + z;
+			delay.put(player.getName(), ((int) value * 5));
+		}
 	}
 	
 	@EventHandler
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
-		Player player = event.getPlayer();
-		if(!(player.getAllowFlight() && player.isFlying())) {
-			delay.put(player.getName(), 20);
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			if(!(player.getAllowFlight() && player.isFlying())) {
+				delay.put(player.getName(), 20);
+			}
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		Location to = event.getTo();
-		Location from = event.getFrom();
-		Block below = to.getBlock().getRelative(0, -1, 0);
-		if(to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
-			delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
-			return;
-		}
-		if(!delay.containsKey(player.getName()) && to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player)) {
-			int counter = 0;
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			Location to = event.getTo();
+			Location from = event.getFrom();
+			Block below = to.getBlock().getRelative(0, -1, 0);
+			if(to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
+				delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
+				return;
+			}
+			if(!delay.containsKey(player.getName()) && to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player)) {
+				int counter = 0;
+				if(flying.containsKey(player.getName())) {
+					counter = flying.get(player.getName());
+				}
+				if(++counter >= 10) {
+					ban(player);
+				} else {
+					flying.put(player.getName(), counter);
+				}
+				return;
+			}
 			if(flying.containsKey(player.getName())) {
-				counter = flying.get(player.getName());
-			}
-			if(++counter >= 10) {
-				ban(player);
-			} else {
-				flying.put(player.getName(), counter);
-			}
-			return;
-		}
-		if(flying.containsKey(player.getName())) {
-			int counter = flying.get(player.getName()) - 1;
-			if(counter <= 0) {
-				flying.remove(player.getName());
-			} else {
-				flying.put(player.getName(), counter);
+				int counter = flying.get(player.getName()) - 1;
+				if(counter <= 0) {
+					flying.remove(player.getName());
+				} else {
+					flying.put(player.getName(), counter);
+				}
 			}
 		}
 	}

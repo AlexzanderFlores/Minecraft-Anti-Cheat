@@ -46,62 +46,60 @@ public class SurvivalFly extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 20) {
-			if(isEnabled()) {
-				Iterator<String> iterator = disabledCounters.keySet().iterator();
-				while(iterator.hasNext()) {
-					String name = iterator.next();
-					int counter = disabledCounters.get(name);
-					if(--counter <= 0) {
-						iterator.remove();
-					} else {
-						disabledCounters.put(name, counter);
-					}
+		if(ticks == 20 && isEnabled()) {
+			Iterator<String> iterator = disabledCounters.keySet().iterator();
+			while(iterator.hasNext()) {
+				String name = iterator.next();
+				int counter = disabledCounters.get(name);
+				if(--counter <= 0) {
+					iterator.remove();
+				} else {
+					disabledCounters.put(name, counter);
 				}
-				new AsyncDelayedTask(new Runnable() {
-					@Override
-					public void run() {
-						for(Player player : Bukkit.getOnlinePlayers()) {
-							if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
-								if(notIgnored(player) && !disabledCounters.containsKey(player.getName()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
-									Location location = player.getLocation();
-									int blocks = 0;
-									for(int a = 0; a < 3; ++a) {
-										Block block = location.getBlock().getRelative(0, -a, 0);
-										if(block.getType() == Material.AIR) {
-											++blocks;
-										} else {
-											blocks = 0;
-											floating.remove(player.getName());
-											return;
-										}
+			}
+			new AsyncDelayedTask(new Runnable() {
+				@Override
+				public void run() {
+					for(Player player : Bukkit.getOnlinePlayers()) {
+						if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.getAllowFlight() && player.getVehicle() == null) {
+							if(notIgnored(player) && !disabledCounters.containsKey(player.getName()) && !player.hasPotionEffect(PotionEffectType.JUMP)) {
+								Location location = player.getLocation();
+								int blocks = 0;
+								for(int a = 0; a < 3; ++a) {
+									Block block = location.getBlock().getRelative(0, -a, 0);
+									if(block.getType() == Material.AIR) {
+										++blocks;
+									} else {
+										blocks = 0;
+										floating.remove(player.getName());
+										return;
 									}
-									if(blocks == 3) {
-										for(int y = 0; y >= -1; --y) {
-											for(int x = 1; x >= -1; --x) {
-												for(int z = 1; z >= -1; --z) {
-													if(player.getLocation().getBlock().getRelative(x, y, z).getType() != Material.AIR) {
-														return;
-													}
+								}
+								if(blocks == 3) {
+									for(int y = 0; y >= -1; --y) {
+										for(int x = 1; x >= -1; --x) {
+											for(int z = 1; z >= -1; --z) {
+												if(player.getLocation().getBlock().getRelative(x, y, z).getType() != Material.AIR) {
+													return;
 												}
 											}
 										}
-										int counter = 0;
-										if(floating.containsKey(player.getName())) {
-											counter = floating.get(player.getName());
-										}
-										if(++counter >= 3) {
-											ban(player);
-										} else {
-											floating.put(player.getName(), counter);
-										}
+									}
+									int counter = 0;
+									if(floating.containsKey(player.getName())) {
+										counter = floating.get(player.getName());
+									}
+									if(++counter >= 3) {
+										ban(player);
+									} else {
+										floating.put(player.getName(), counter);
 									}
 								}
 							}
 						}
 					}
-				});
-			}
+				}
+			});
 		}
 	}
 	

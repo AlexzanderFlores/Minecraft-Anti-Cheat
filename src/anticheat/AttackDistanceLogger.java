@@ -26,7 +26,7 @@ public class AttackDistanceLogger extends AntiCheatBase {
 	
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+		if(isEnabled() && event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
 			Player player = (Player) event.getEntity();
 			Player damager = (Player) event.getDamager();
 			Location playerLocation = player.getLocation();
@@ -45,24 +45,26 @@ public class AttackDistanceLogger extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		Player player = event.getPlayer();
-		String name = player.getName();
-		if(loggings.containsKey(name)) {
-			UUID uuid = player.getUniqueId();
-			List<Double> logging = loggings.get(name);
-			if(logging != null) {
-				double average = 0.0d;
-				for(double distance : logging) {
-					average += distance;
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			String name = player.getName();
+			if(loggings.containsKey(name)) {
+				UUID uuid = player.getUniqueId();
+				List<Double> logging = loggings.get(name);
+				if(logging != null) {
+					double average = 0.0d;
+					for(double distance : logging) {
+						average += distance;
+					}
+					if(average > 0) {
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_ATTACK_DISTANCE_LOGS " + uuid.toString() + " " + (average / logging.size()));
+					}
+					loggings.get(name).clear();
+					logging.clear();
+					logging = null;
 				}
-				if(average > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_ATTACK_DISTANCE_LOGS " + uuid.toString() + " " + (average / logging.size()));
-				}
-				loggings.get(name).clear();
-				logging.clear();
-				logging = null;
+				loggings.remove(name);
 			}
-			loggings.remove(name);
 		}
 	}
 }
