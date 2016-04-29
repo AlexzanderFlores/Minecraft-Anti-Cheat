@@ -1,10 +1,7 @@
 package anticheat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,11 +17,9 @@ import anticheat.util.TimeEvent;
 
 public class BlocksPerSecondLogger implements Listener {
 	private Map<String, Location> lastLocations = null;
-	private Map<String, List<Double>> loggings = null;
 	
 	public BlocksPerSecondLogger() {
 		lastLocations = new HashMap<String, Location>();
-		loggings = new HashMap<String, List<Double>>();
 		EventUtil.register(this);
 	}
 	
@@ -45,12 +40,6 @@ public class BlocksPerSecondLogger implements Listener {
 						double distance = pLoc.distance(lLoc);
 						if(distance > 0) {
 							Bukkit.getPluginManager().callEvent(new BPSEvent(player, distance));
-							List<Double> logging = loggings.get(name);
-							if(logging == null) {
-								logging = new ArrayList<Double>();
-							}
-							logging.add(distance);
-							loggings.put(name, logging);
 						}
 					}
 				}
@@ -65,25 +54,6 @@ public class BlocksPerSecondLogger implements Listener {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		Player player = event.getPlayer();
-		String name = player.getName();
-		if(loggings.containsKey(name)) {
-			UUID uuid = player.getUniqueId();
-			List<Double> logging = loggings.get(name);
-			if(logging != null) {
-				double average = 0;
-				for(double distance : logging) {
-					average += distance;
-				}
-				if(average > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_DISTANCE_LOGS " + uuid.toString() + " " + (average / logging.size()));
-				}
-				loggings.get(name).clear();
-				logging.clear();
-				logging = null;
-			}
-			loggings.remove(name);
-		}
-		lastLocations.remove(name);
+		lastLocations.remove(event.getPlayer().getName());
 	}
 }
