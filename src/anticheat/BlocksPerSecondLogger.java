@@ -13,10 +13,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
 import anticheat.util.BPSEvent;
-import anticheat.util.DB;
 import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
 
 public class BlocksPerSecondLogger implements Listener {
@@ -65,10 +64,11 @@ public class BlocksPerSecondLogger implements Listener {
 	}
 	
 	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		String name = player.getName();
 		if(loggings.containsKey(name)) {
-			UUID uuid = event.getUUID();
+			UUID uuid = player.getUniqueId();
 			List<Double> logging = loggings.get(name);
 			if(logging != null) {
 				double average = 0;
@@ -76,7 +76,7 @@ public class BlocksPerSecondLogger implements Listener {
 					average += distance;
 				}
 				if(average > 0) {
-					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "'");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_DISTANCE_LOGS " + uuid.toString() + " " + (average / logging.size()));
 				}
 				loggings.get(name).clear();
 				logging.clear();

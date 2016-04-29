@@ -12,9 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
-import anticheat.util.DB;
 import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
 
 public class AutoClicker extends AntiCheatBase {
@@ -65,10 +64,11 @@ public class AutoClicker extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
-		UUID uuid = event.getUUID();
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		String name = player.getName();
 		if(loggings.containsKey(name)) {
+			UUID uuid = player.getUniqueId();
 			List<Integer> logging = loggings.get(name);
 			if(logging != null) {
 				int average = 0;
@@ -76,7 +76,7 @@ public class AutoClicker extends AntiCheatBase {
 					average += cps;
 				}
 				if(average > 0) {
-					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "'");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + (average / logging.size()));
 				}
 				loggings.get(name).clear();
 				logging.clear();

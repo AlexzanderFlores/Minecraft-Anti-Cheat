@@ -1,34 +1,20 @@
 package anticheat;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import com.mysql.jdbc.TimeUtil;
-
 import anticheat.killaura.AttackThroughWalls;
 import anticheat.killaura.InventoryKillAuraDetection;
-import anticheat.util.DB;
-import anticheat.util.MessageHandler;
 import anticheat.util.Timer;
 
-@SuppressWarnings("unused")
 public class AntiCheatBase implements Listener {
 	private static boolean enabled = true;
-	private static List<String> banned = null; //TODO: Remove this on player leave
 	private String name = null;
 	private int maxPing = 135;
 	
 	public AntiCheatBase() {
-		banned = new ArrayList<String>();
 		new BlocksPerSecondLogger();
 		new InvisibleFireGlitchFix();
 		new FastBowFix();

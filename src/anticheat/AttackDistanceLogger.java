@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
-import anticheat.util.DB;
 import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
 
 public class AttackDistanceLogger extends AntiCheatBase {
 	private Map<String, List<Double>> loggings = null;
@@ -44,10 +44,11 @@ public class AttackDistanceLogger extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
-		UUID uuid = event.getUUID();
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		String name = player.getName();
 		if(loggings.containsKey(name)) {
+			UUID uuid = player.getUniqueId();
 			List<Double> logging = loggings.get(name);
 			if(logging != null) {
 				double average = 0.0d;
@@ -55,7 +56,7 @@ public class AttackDistanceLogger extends AntiCheatBase {
 					average += distance;
 				}
 				if(average > 0) {
-					DB.NETWORK_ATTACK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / logging.size()) + "'");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_ATTACK_DISTANCE_LOGS " + uuid.toString() + " " + (average / logging.size()));
 				}
 				loggings.get(name).clear();
 				logging.clear();

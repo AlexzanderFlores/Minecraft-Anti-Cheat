@@ -18,8 +18,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
-import anticheat.util.DB;
 import anticheat.util.EventUtil;
 import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
@@ -151,18 +149,15 @@ public class SpeedFix extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		speeds.remove(event.getPlayer().getName());
-	}
-	
-	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
-		UUID uuid = event.getUUID();
+		Player player = event.getPlayer();
+		String name = player.getName();
+		speeds.remove(name);
 		if(loggings.containsKey(name)) {
+			UUID uuid = player.getUniqueId();
 			List<Double> logging = loggings.get(name);
 			if(logging != null) {
 				for(double dis : logging) {
-					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + dis + "'");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_DISTANCE_LOGS " + uuid.toString() + " " + dis);
 				}
 				loggings.get(name).clear();
 			}

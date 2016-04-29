@@ -2,12 +2,10 @@ package anticheat.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import anticheat.AntiCheat;
@@ -41,17 +39,5 @@ public class Timer implements Listener {
 	public static int getPing(Player player) {
 		CraftPlayer craftPlayer = (CraftPlayer) player;
 		return craftPlayer.getHandle().ping / 2;
-	}
-	
-	@EventHandler
-	public void onPlayerLeave(PlayerLeaveEvent event) {
-		final UUID uuid = event.getPlayer().getUniqueId();
-		final String name = event.getPlayer().getName();
-		new AsyncDelayedTask(new Runnable() {
-			@Override
-			public void run() {
-				Bukkit.getPluginManager().callEvent(new AsyncPlayerLeaveEvent(uuid, name));
-			}
-		});
 	}
 }

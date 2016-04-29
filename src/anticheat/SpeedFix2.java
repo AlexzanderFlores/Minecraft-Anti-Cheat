@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,18 +21,17 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
 import anticheat.util.BPSEvent;
 import anticheat.util.DelayedTask;
 import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
-import net.md_5.bungee.api.ChatColor;
+import anticheat.util.Timer;
 
 public class SpeedFix2 extends AntiCheatBase {
 	private Map<String, List<Long>> violations = null;
 	private Map<String, Integer> delay = null;
 	private List<String> badBlockDelay = null;
-	private List<String> banned = null;
 	private String [] badBlocks = null;
 	private long ticks = 0;
 	
@@ -39,7 +40,6 @@ public class SpeedFix2 extends AntiCheatBase {
 		violations = new HashMap<String, List<Long>>();
 		delay = new HashMap<String, Integer>();
 		badBlockDelay = new ArrayList<String>();
-		banned = new ArrayList<String>();
 		badBlocks = new String [] {"STAIR", "SLAB", "ICE"};
 		EventUtil.register(this);
 	}
@@ -103,7 +103,7 @@ public class SpeedFix2 extends AntiCheatBase {
 	public void onBPS(BPSEvent event) {
 		Player player = event.getPlayer();
 		final String name = player.getName();
-		if(banned.contains(name)) {
+		if(Timer.getPing(player) < getMaxPing()) {
 			return;
 		}
 		if(!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED)) {
@@ -142,9 +142,7 @@ public class SpeedFix2 extends AntiCheatBase {
 					for(long ticks : violation) {
 						if(this.ticks - ticks <= 120) {
 							if(++recent >= 2) {
-								//banned.add(name);
-								player.sendMessage(ChatColor.RED + "KICKED FOR SPEED (Tell Leet this)");
-								//DB.NETWORK_ANTI_CHEAT_TESTING.insert("'" + player.getUniqueId().toString() + " " + distance + " " + OSTB.getServerName() + " v2.0'");
+								ban(player);
 								return;
 							}
 						}
@@ -155,25 +153,25 @@ public class SpeedFix2 extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		String name = player.getName();
 		if(violations.containsKey(name)) {
-			//UUID uuid = event.getUUID();
+			UUID uuid = player.getUniqueId();
 			List<Long> loggings = violations.get(name);
 			if(loggings != null) {
-				/*int average = 0;
+				int average = 0;
 				for(long logging : loggings) {
 					average += logging;
 				}
 				if(average > 0) {
-					DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "', '" + OSTB.getServerName() + "'");
-				}*/
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_DISTANCE_LOGS " + uuid.toString() + " " + (average / loggings.size()));
+				}
 				violations.get(name).clear();
 				loggings.clear();
 				loggings = null;
 			}
 			violations.remove(name);
 		}
-		banned.remove(name);
 	}
 }

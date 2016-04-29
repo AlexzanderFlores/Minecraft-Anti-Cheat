@@ -129,13 +129,9 @@ public class FlyFix extends AntiCheatBase {
 				counter = flying.get(player.getName());
 			}
 			if(++counter >= 10) {
-				//player.kickPlayer("Flying (Send this to leet)");
-				player.sendMessage(ChatColor.RED + "KICKED FOR FLY (TELL LEET THIS)");
+				ban(player);
 			} else {
 				flying.put(player.getName(), counter);
-			}
-			if(counter >= 5) {
-				player.sendMessage("Flying counter: " + counter + " (Tell leet this)");
 			}
 			return;
 		}

@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
-import anticheat.util.AsyncPlayerLeaveEvent;
-import anticheat.util.DB;
 import anticheat.util.EventUtil;
+import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 
@@ -71,9 +71,10 @@ public class FastBowFix extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
-		String name = event.getName();
-		UUID uuid = event.getUUID();
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		Player player = event.getPlayer();
+		String name = player.getName();
+		UUID uuid = player.getUniqueId();
 		if(loggings.containsKey(name)) {
 			List<Integer> logging = loggings.get(name);
 			if(logging != null) {
@@ -82,7 +83,7 @@ public class FastBowFix extends AntiCheatBase {
 					average += shots;
 				}
 				if(average > 0) {
-					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "'");
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + (average / loggings.size()));
 				}
 				loggings.get(name).clear();
 				logging.clear();
