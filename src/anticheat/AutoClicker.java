@@ -39,7 +39,6 @@ public class AutoClicker extends AntiCheatBase {
 		if(isEnabled() && (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK)) {
 			Player player = event.getPlayer();
 			final String name = player.getName();
-			Bukkit.getLogger().info("ANTI CHEAT: " + name + " is left clicking");
 			int click = 0;
 			if(clicks.containsKey(name)) {
 				click = clicks.get(name);

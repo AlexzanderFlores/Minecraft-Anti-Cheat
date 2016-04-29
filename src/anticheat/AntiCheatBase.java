@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 
 import anticheat.killaura.AttackThroughWalls;
 import anticheat.killaura.InventoryKillAuraDetection;
+import anticheat.killaura.KillAura;
 import anticheat.util.Timer;
 
 public class AntiCheatBase implements Listener {
@@ -30,6 +31,7 @@ public class AntiCheatBase implements Listener {
 		new SpamBotFix();
 		new WaterWalkDetection();
 		new AutoClicker();
+		new KillAura();
 	}
 	
 	public AntiCheatBase(String name) {

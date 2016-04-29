@@ -89,7 +89,11 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 		if(ticks == 20 && isEnabled()) {
 			attacksPerSecond.clear();
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				secondsLived.put(player.getName(), secondsLived.get(player.getName()) + 1);
+				int seconds = 0;
+				if(secondsLived.containsKey(player.getName())) {
+					seconds = secondsLived.get(player.getName());
+				}
+				secondsLived.put(player.getName(), ++seconds);
 				if(getSecondsLived(player) >= maxSeconds && spawningLocation.containsKey(player.getName())) {
 					spawningLocation.remove(player.getName());
 				}
