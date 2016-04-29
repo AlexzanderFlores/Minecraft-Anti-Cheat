@@ -1,8 +1,6 @@
 package anticheat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,12 +17,12 @@ import anticheat.util.Timer;
 
 public class FastBowFix extends AntiCheatBase {
 	private Map<String, Integer> timesFired = null;
-	private Map<String, List<Integer>> loggings = null;
+	private Map<String, Integer> loggings = null;
 	
 	public FastBowFix() {
 		super("FastBow");
 		timesFired = new HashMap<String, Integer>();
-		loggings = new HashMap<String, List<Integer>>();
+		loggings = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
@@ -52,11 +50,10 @@ public class FastBowFix extends AntiCheatBase {
 					timesFired.put(player.getName(), ++times);
 					if(times >= 2) {
 						if(times >= 10) {
-							List<Integer> logging = loggings.get(player.getName());
-							if(logging == null) {
-								logging = new ArrayList<Integer>();
+							int logging = 1;
+							if(loggings.containsKey(player.getName())) {
+								logging += loggings.get(player.getName());
 							}
-							logging.add(times);
 							loggings.put(player.getName(), logging);
 						}
 						event.setCancelled(true);
@@ -75,18 +72,9 @@ public class FastBowFix extends AntiCheatBase {
 			String name = player.getName();
 			UUID uuid = player.getUniqueId();
 			if(loggings.containsKey(name)) {
-				List<Integer> logging = loggings.get(name);
-				if(logging != null) {
-					int average = 0;
-					for(int shots : logging) {
-						average += shots;
-					}
-					if(average > 0) {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + (average / loggings.size()));
-					}
-					loggings.get(name).clear();
-					logging.clear();
-					logging = null;
+				int timesShot = loggings.get(name);
+				if(timesShot > 0) {
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + timesShot);
 				}
 				loggings.remove(name);
 			}

@@ -1,8 +1,6 @@
 package anticheat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,12 +16,12 @@ import anticheat.util.TimeEvent;
 
 public class AutoClicker extends AntiCheatBase {
 	private Map<String, Integer> clicks = null;
-	private Map<String, List<Integer>> loggings = null;
+	private Map<String, Integer> loggings = null;
 	
 	public AutoClicker() {
 		super("AutoClicker");
 		clicks = new HashMap<String, Integer>();
-		loggings = new HashMap<String, List<Integer>>();
+		loggings = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
@@ -48,14 +46,11 @@ public class AutoClicker extends AntiCheatBase {
 			}
 			clicks.put(name, ++click);
 			if(click >= 20) {
-				int cps = clicks.get(name);
-				List<Integer> logging = loggings.get(name);
-				if(logging == null) {
-					logging = new ArrayList<Integer>();
+				int logging = 1;
+				if(loggings.containsKey(player.getName())) {
+					logging += loggings.get(player.getName());
 				}
-				logging.add(cps);
-				loggings.put(name, logging);
-				Bukkit.getLogger().info("ANTI CHEAT: cancelling click for " + name);
+				loggings.put(player.getName(), logging);
 				event.setCancelled(true);
 			}
 		}
@@ -68,18 +63,9 @@ public class AutoClicker extends AntiCheatBase {
 			String name = player.getName();
 			if(loggings.containsKey(name)) {
 				UUID uuid = player.getUniqueId();
-				List<Integer> logging = loggings.get(name);
-				if(logging != null) {
-					int average = 0;
-					for(int cps : logging) {
-						average += cps;
-					}
-					if(average > 0) {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + (average / logging.size()));
-					}
-					loggings.get(name).clear();
-					logging.clear();
-					logging = null;
+				int timesLogged = loggings.get(name);
+				if(timesLogged > 0) {
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + timesLogged);
 				}
 				loggings.remove(name);
 			}
