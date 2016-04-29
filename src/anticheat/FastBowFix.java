@@ -22,7 +22,7 @@ public class FastBowFix extends AntiCheatBase {
 	private Map<String, List<Integer>> loggings = null;
 	
 	public FastBowFix() {
-		super("Fast Bow");
+		super("FastBow");
 		timesFired = new HashMap<String, Integer>();
 		loggings = new HashMap<String, List<Integer>>();
 		EventUtil.register(this);

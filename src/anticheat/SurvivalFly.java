@@ -29,7 +29,7 @@ public class SurvivalFly extends AntiCheatBase {
 	private Map<String, Integer> floating = null;
 	
 	public SurvivalFly() {
-		super("Survival Fly");
+		super("SurvivalFly");
 		heightIncreasing = new HashMap<String, Integer>();
 		wouldBan = new HashMap<String, Integer>();
 		disabledCounters = new HashMap<String, Integer>();

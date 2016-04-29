@@ -21,7 +21,7 @@ public class AttackThroughWalls extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public AttackThroughWalls() {
-		super("Attack Through Walls");
+		super("AttackThroughWalls");
 		counters = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}

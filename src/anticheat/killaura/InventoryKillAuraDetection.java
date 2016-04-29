@@ -26,7 +26,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	private int maxSeconds = 5;
 	
 	public InventoryKillAuraDetection() {
-		super("Kill Aura");
+		super("KillAura");
 		attacksPerSecond = new HashMap<String, Integer>();
 		spawningLocation = new HashMap<String, Location>();
 		secondsLived = new HashMap<String, Integer>();

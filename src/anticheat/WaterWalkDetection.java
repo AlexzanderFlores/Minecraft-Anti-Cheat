@@ -17,7 +17,7 @@ public class WaterWalkDetection extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public WaterWalkDetection() {
-		super("Water Walking");
+		super("WaterWalking");
 		counters = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}

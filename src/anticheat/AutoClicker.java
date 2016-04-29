@@ -21,7 +21,7 @@ public class AutoClicker extends AntiCheatBase {
 	private Map<String, List<Integer>> loggings = null;
 	
 	public AutoClicker() {
-		super("Auto Clicker");
+		super("AutoClicker");
 		clicks = new HashMap<String, Integer>();
 		loggings = new HashMap<String, List<Integer>>();
 		EventUtil.register(this);

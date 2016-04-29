@@ -14,7 +14,7 @@ public class AutoCritFix extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
 	
 	public AutoCritFix() {
-		super("Auto Crit");
+		super("AutoCrit");
 		counters = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
