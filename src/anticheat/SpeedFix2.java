@@ -13,20 +13,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import anticheat.events.BPSEvent;
 import net.md_5.bungee.api.ChatColor;
+import ostb.ProPlugin;
 import ostb.customevents.TimeEvent;
 import ostb.customevents.player.AsyncPlayerLeaveEvent;
 import ostb.server.tasks.DelayedTask;
 import ostb.server.util.EventUtil;
 
 public class SpeedFix2 extends AntiCheatBase {
-	private Map<String, Integer> disabled = null;
 	private Map<String, List<Long>> violations = null;
-	private Map<String, Integer> damageDelays = null;
+	private Map<String, Integer> delay = null;
 	private List<String> badBlockDelay = null;
 	private List<String> banned = null;
 	private String [] badBlocks = null;
@@ -34,9 +36,8 @@ public class SpeedFix2 extends AntiCheatBase {
 	
 	public SpeedFix2() {
 		super("Speed");
-		disabled = new HashMap<String, Integer>();
 		violations = new HashMap<String, List<Long>>();
-		damageDelays = new HashMap<String, Integer>();
+		delay = new HashMap<String, Integer>();
 		badBlockDelay = new ArrayList<String>();
 		banned = new ArrayList<String>();
 		badBlocks = new String [] {"STAIR", "SLAB", "ICE"};
@@ -48,40 +49,47 @@ public class SpeedFix2 extends AntiCheatBase {
 		long ticks = event.getTicks();
 		if(ticks == 1) {
 			++this.ticks;
-			Iterator<String> iterator = damageDelays.keySet().iterator();
+			Iterator<String> iterator = delay.keySet().iterator();
 			while(iterator.hasNext()) {
 				String name = iterator.next();
-				int counter = damageDelays.get(name);
+				int counter = delay.get(name);
 				if(--counter <= 0) {
 					iterator.remove();
 				} else {
-					damageDelays.put(name, counter);
+					delay.put(name, counter);
 				}
-			}
-		} else if(ticks == 20) {
-			Iterator<String> iterator = disabled.keySet().iterator();
-			while(iterator.hasNext()) {
-				String name = iterator.next();
-				int counter = disabled.get(name);
-				if(--counter <= 0) {
-					iterator.remove();
-				} else {
-					disabled.put(name, counter);
+				Player player = ProPlugin.getPlayer(name);
+				if(player != null) {
+					player.setLevel(counter);
 				}
 			}
 		}
 	}
 	
-	//@EventHandler
+	@EventHandler
 	public void onPlayerVelocity(PlayerVelocityEvent event) {
-		//TODO: Add a delay based off of event.getVelocity()
+		Player player = event.getPlayer();
+		Vector vel = player.getVelocity();
+		double x = vel.getX() < 0 ? vel.getX() * -1 : vel.getX();
+		double y = vel.getY() < 0 ? vel.getY() * -1 : vel.getY();
+		double z = vel.getZ() < 0 ? vel.getZ() * -1 : vel.getZ();
+		double value = x + y + z;
+		delay.put(player.getName(), ((int) value * 5));
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
 		if(!event.isCancelled() && event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
-			damageDelays.put(player.getName(), 20);
+			delay.put(player.getName(), 20);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+		Player player = event.getPlayer();
+		if(!(player.getAllowFlight() && player.isFlying())) {
+			delay.put(player.getName(), 20);
 		}
 	}
 	
@@ -92,8 +100,8 @@ public class SpeedFix2 extends AntiCheatBase {
 		if(banned.contains(name)) {
 			return;
 		}
-		if(!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED) && !disabled.containsKey(name)) {
-			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !damageDelays.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
+		if(!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED)) {
+			if(notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !delay.containsKey(name) && player.getWalkSpeed() == 0.2f && player.getFlySpeed() == 0.1f) {
 				Location location = player.getLocation();
 				for(int a = -2; a <= 0; ++a) {
 					Block block = location.getBlock().getRelative(0, a, 0);
