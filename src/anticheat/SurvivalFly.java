@@ -11,7 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
@@ -19,7 +18,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.EventUtil;
-import anticheat.util.MessageHandler;
 import anticheat.util.PlayerLeaveEvent;
 import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
@@ -196,14 +194,6 @@ public class SurvivalFly extends AntiCheatBase {
 			heightIncreasing.remove(event.getPlayer().getName());
 			wouldBan.remove(event.getPlayer().getName());
 			floating.remove(event.getPlayer().getName());
-		}
-	}
-	
-	@EventHandler
-	public void onPlayerKick(PlayerKickEvent event) {
-		if(event.getLeaveMessage().equalsIgnoreCase("Flying is not enabled on this server")) {
-			MessageHandler.alert(event.getPlayer().getName() + ": Flying is not enabled on this server");
-			event.setCancelled(true);
 		}
 	}
 }
