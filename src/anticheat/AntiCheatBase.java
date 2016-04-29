@@ -37,7 +37,7 @@ public class AntiCheatBase implements Listener {
 	}
 	
 	public static boolean isEnabled() {
-		return enabled;
+		return enabled && Timer.getTicksPerSecond() >= 18.75 && Timer.getMemory() <= 85;
 	}
 	
 	public static void setEnabled(boolean enabled) {
@@ -50,7 +50,7 @@ public class AntiCheatBase implements Listener {
 	
 	public boolean notIgnored(Player player) {
 		int ping = Timer.getPing(player);
-		return ping > 0 && ping <= maxPing && player.getGameMode() != GameMode.CREATIVE;
+		return ping > 0 && ping <= maxPing && player.getGameMode() == GameMode.SURVIVAL;
 	}
 	
 	public void kick(Player player) {
