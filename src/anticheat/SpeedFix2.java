@@ -20,8 +20,8 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import anticheat.events.AsyncPlayerLeaveEvent;
 import anticheat.events.BPSEvent;
-import anticheat.events.PlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.DB;
 import anticheat.util.DelayedTask;
@@ -161,12 +161,11 @@ public class SpeedFix2 extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onPlayerLeave(PlayerLeaveEvent event) {
+	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
 		if(isEnabled()) {
-			Player player = event.getPlayer();
-			String name = player.getName();
+			String name = event.getName();
 			if(violations.containsKey(name)) {
-				UUID uuid = player.getUniqueId();
+				UUID uuid = event.getUUID();
 				List<Long> loggings = violations.get(name);
 				if(loggings != null) {
 					int average = 0;

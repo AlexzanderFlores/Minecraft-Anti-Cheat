@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
 import anticheat.events.CPSEvent;
+import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.EventUtil;
 
 public class ClickPatternDetector extends AntiCheatBase {
@@ -25,24 +26,36 @@ public class ClickPatternDetector extends AntiCheatBase {
 	@EventHandler
 	public void onCPS(CPSEvent event) {
 		String name = event.getName();
-		int cps = event.getCPS();
-		Map<Integer, Integer> logs = patternLogs.get(name);
-		if(logs == null) {
-			logs = new HashMap<Integer, Integer>();
+		if(resetOnce.contains(name)) {
+			int cps = event.getCPS();
+			Map<Integer, Integer> logs = patternLogs.get(name);
+			if(logs == null) {
+				logs = new HashMap<Integer, Integer>();
+			}
+			if(logs.containsKey(cps)) {
+				int counter = logs.get(cps);
+				logs.put(cps, ++counter);
+				int required = 60;
+				if(counter >= required) {
+					Bukkit.getLogger().info("ANTI CHEAT: Click pattern detected" + name + " has had a CPS of " + cps + " for " + required + "+ seconds of clicking without any change");
+				}
+			} else {
+				if(!logs.isEmpty()) {
+					resetOnce.add(name);
+				}
+				logs.clear();
+				logs.put(cps, 1);
+			}
 		}
-		if(logs.containsKey(cps)) {
-			int counter = logs.get(cps);
-			logs.put(cps, ++counter);
-			int required = 60;
-			if(!resetOnce.contains(name) && counter >= required) {
-				Bukkit.getLogger().info("ANTI CHEAT: Click pattern detected" + name + " has had a CPS of " + cps + " for " + required + "+ seconds of clicking without any change");
-			}
-		} else {
-			if(!logs.isEmpty()) {
-				resetOnce.add(name);
-			}
-			logs.clear();
-			logs.put(cps, 1);
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		String name = event.getPlayer().getName();
+		resetOnce.remove(name);
+		if(patternLogs.containsKey(name)) {
+			patternLogs.get(name).clear();
+			patternLogs.remove(name);
 		}
 	}
 }

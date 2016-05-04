@@ -65,7 +65,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 				}
 				Bukkit.getLogger().info("ANTI CHEAT: " + player.getName() + " attacks: " + attacks);
 				if(++attacks >= 7) {
-					ban(player);
+					ban(player, true);
 				} else {
 					attacksPerSecond.put(player.getName(), attacks);
 				}

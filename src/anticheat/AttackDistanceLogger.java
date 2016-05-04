@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.AsyncPlayerLeaveEvent;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
@@ -44,12 +44,11 @@ public class AttackDistanceLogger extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onPlayerLeave(PlayerLeaveEvent event) {
+	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
 		if(isEnabled()) {
-			Player player = event.getPlayer();
-			String name = player.getName();
+			String name = event.getName();
 			if(loggings.containsKey(name)) {
-				UUID uuid = player.getUniqueId();
+				UUID uuid = event.getUUID();
 				List<Double> logging = loggings.get(name);
 				if(logging != null) {
 					double average = 0.0d;

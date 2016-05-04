@@ -70,11 +70,17 @@ public class AntiCheatBase implements Listener {
 	}
 	
 	public void ban(Player player) {
+		ban(player, false);
+	}
+	
+	public void ban(Player player, boolean queue) {
 		if(notIgnored(player) && !banned.contains(player.getName())) {
 			banned.add(player.getName());
-			Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), name));
-			player.kickPlayer(ChatColor.RED + "You have been banned for cheating");
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + " was banned for cheating"));
+			Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), name, queue));
+			if(!queue) {
+				player.kickPlayer(ChatColor.RED + "You have been banned for cheating");
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + " was banned for cheating"));
+			}
 			new AsyncDelayedTask(new Runnable() {
 				@Override
 				public void run() {

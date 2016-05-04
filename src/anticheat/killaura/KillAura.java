@@ -32,8 +32,10 @@ public class KillAura extends AntiCheatBase {
 			Player damager = (Player) event.getDamager();
 			Player player = (Player) event.getEntity();
 			Player near = getNearestEntityInSight(damager, 5);
-			if(near == null || near != player) {
-				Bukkit.broadcastMessage(damager.getName() + " damaging player out of sight <<<===");
+			double distance = damager.getLocation().distance(near.getLocation());
+			Bukkit.getLogger().info("Distance = " + distance);
+			if((near == null || near != player) && distance > 2) {
+				Bukkit.getLogger().info(damager.getName() + " damaging player out of sight <<<===");
 			}
 		}
 	}
@@ -53,7 +55,7 @@ public class KillAura extends AntiCheatBase {
 	            break;
 	        }
 	        Location low = block.getLocation(); //Lower corner of the block
-	        Location high = low.clone().add(0.5, 0.5, 0.5); //Higher corner of the block
+	        Location high = low.clone().add(1, 1, 1); //Higher corner of the block
 	        AxisAlignedBB blockBoundingBox = AxisAlignedBB.a(low.getX(), low.getY(), low.getZ(), high.getX(), high.getY(), high.getZ()); //The bounding or collision box of the block
 	        for(Entity entity : entities) { //For every living entity in the player's range
 	            //If the entity is truly close enough and the bounding box of the block (1x1x1 box) intersects with the entity's bounding box, return it
