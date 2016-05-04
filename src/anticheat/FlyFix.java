@@ -12,7 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
@@ -45,7 +47,7 @@ public class FlyFix extends AntiCheatBase {
 	
 	private boolean checkForFly(Player player) {
 		if(Timer.getPing(player) < getMaxPing() && player.getTicksLived() >= 20 * 3 && !player.isFlying() && player.getVehicle() == null) {
-			if(notIgnored(player) && player.getWalkSpeed() == 0.2f) {
+			if(notIgnored(player) && player.getTicksLived() >= 20 * 3 && player.getWalkSpeed() == 0.2f) {
 				return true;
 			}
 		}
@@ -63,7 +65,7 @@ public class FlyFix extends AntiCheatBase {
 		if(isOnIgnored(player)) {
 			return true;
 		}
-		for(int a = checkBelow ? -2 : 0; a <= 0; ++a) {
+		for(int a = checkBelow ? -1 : 0; a <= 0; ++a) {
 			Block block = player.getLocation().getBlock().getRelative(0, a, 0);
 			for(int x = -1; x <= 1; ++x) {
 				//for(int y = 0; y <= 1; ++y) {
@@ -105,7 +107,7 @@ public class FlyFix extends AntiCheatBase {
 							}
 							if(++counter >= 2) {
 								//player.kickPlayer("Floating too long (Send this to leet)");
-								player.sendMessage(ChatColor.DARK_RED + "KICKED FOR FLOATING (TELL LEET THIS ASAP)");
+								Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLOATING (TELL LEET THIS ASAP)");
 							} else {
 								floating.put(player.getName(), counter);
 							}
@@ -127,7 +129,22 @@ public class FlyFix extends AntiCheatBase {
 			double y = vel.getY() < 0 ? vel.getY() * -1 : vel.getY();
 			double z = vel.getZ() < 0 ? vel.getZ() * -1 : vel.getZ();
 			double value = x + y + z;
-			delay.put(player.getName(), ((int) value * 5));
+			delay.put(player.getName(), ((int) value * 10));
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDamage(EntityDamageEvent event) {
+		if(event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			delay.put(player.getName(), 20);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if(isEnabled()) {
+			delay.put(event.getPlayer().getName(), 20);
 		}
 	}
 	
@@ -148,13 +165,14 @@ public class FlyFix extends AntiCheatBase {
 				String vel = y + "";
 				vel = vel.substring(3);
 				if(vel.startsWith("199999")) {
-					delay.put(player.getName(), 12);
+					delay.put(player.getName(), 20);
 					return;
 				}
 			}
 			y = player.getLocation().getY();
-			if(y % 1 == 0 || y % .5 == 0) {
-				delay.put(player.getName(), 12);
+			Block block = player.getLocation().getBlock();
+			if((y % 1 == 0 || y % .5 == 0) && (block.getType() != Material.AIR || block.getRelative(0, -1, 0).getType() != Material.AIR)) {
+				delay.put(player.getName(), 20);
 				return;
 			}
 			Location to = event.getTo();
@@ -164,13 +182,13 @@ public class FlyFix extends AntiCheatBase {
 				delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
 				return;
 			}
-			if(!delay.containsKey(player.getName()) && to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player, false)) {
+			if(!delay.containsKey(player.getName()) && to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player, true)) {
 				int counter = 0;
 				if(flying.containsKey(player.getName())) {
 					counter = flying.get(player.getName());
 				}
 				if(++counter >= 1) {
-					player.sendMessage(ChatColor.DARK_RED + "KICKED FOR FLYING (TELL LEET THIS ASAP)");
+					Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLYING (TELL LEET THIS ASAP)");
 					//ban(player);
 				} else {
 					flying.put(player.getName(), counter);

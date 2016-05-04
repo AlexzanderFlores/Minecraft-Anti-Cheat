@@ -7,13 +7,11 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.util.Vector;
 
 import anticheat.events.AsyncPlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
-import anticheat.util.Timer;
 
 public class FastBowFix extends AntiCheatBase {
 	private Map<String, Integer> timesFired = null;
@@ -40,34 +38,27 @@ public class FastBowFix extends AntiCheatBase {
 	public void onEntityShootBow(EntityShootBowEvent event) {
 		if(isEnabled() && event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
-			if(Timer.getPing(player) < getMaxPing()) {
-				Vector velocity = event.getProjectile().getVelocity();
-				double x = velocity.getX() < 0 ? velocity.getX() * -1 : velocity.getX();
-				double z = velocity.getZ() < 0 ? velocity.getZ() * -1 : velocity.getZ();
-				if((x + z) >= 2.75 && notIgnored(player)) {
-					int times = 0;
-					if(timesFired.containsKey(player.getName())) {
-						times = timesFired.get(player.getName());
-					}
-					timesFired.put(player.getName(), ++times);
-					times = 0;
-					if(totalTimesFired.containsKey(player.getName())) {
-						times = totalTimesFired.get(player.getName());
-					}
-					totalTimesFired.put(player.getName(), ++times);
-					if(times >= 2) {
-						if(times >= 10) {
-							int uses = 1;
-							if(fastBowUses.containsKey(player.getName())) {
-								uses += fastBowUses.get(player.getName());
-							}
-							fastBowUses.put(player.getName(), uses);
-						}
-						event.setCancelled(true);
-					}
+			if(event.getForce() >= 0.95 && notIgnored(player)) {
+				int times = 0;
+				if(timesFired.containsKey(player.getName())) {
+					times = timesFired.get(player.getName());
 				}
-			} else {
-				timesFired.remove(player.getName());
+				timesFired.put(player.getName(), ++times);
+				if(times >= 2) {
+					if(times >= 10) {
+						int uses = 1;
+						if(fastBowUses.containsKey(player.getName())) {
+							uses += fastBowUses.get(player.getName());
+						}
+						fastBowUses.put(player.getName(), uses);
+					}
+					event.setCancelled(true);
+				}
+				times = 0;
+				if(totalTimesFired.containsKey(player.getName())) {
+					times = totalTimesFired.get(player.getName());
+				}
+				totalTimesFired.put(player.getName(), ++times);
 			}
 		}
 	}

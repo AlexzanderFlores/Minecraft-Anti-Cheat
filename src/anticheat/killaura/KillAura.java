@@ -32,9 +32,12 @@ public class KillAura extends AntiCheatBase {
 			Player damager = (Player) event.getDamager();
 			Player player = (Player) event.getEntity();
 			Player near = getNearestEntityInSight(damager, 5);
-			double distance = damager.getLocation().distance(near.getLocation());
-			Bukkit.getLogger().info("Distance = " + distance);
-			if((near == null || near != player) && distance > 2) {
+			double distance = 0;
+			if(near != null) {
+				distance = damager.getLocation().distance(near.getLocation());
+				Bukkit.getLogger().info("Distance = " + distance);
+			}
+			if(near != player && distance > 2) {
 				Bukkit.getLogger().info(damager.getName() + " damaging player out of sight <<<===");
 			}
 		}
