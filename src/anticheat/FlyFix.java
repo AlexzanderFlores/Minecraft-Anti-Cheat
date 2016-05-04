@@ -145,9 +145,6 @@ public class FlyFix extends AntiCheatBase {
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if(isEnabled()) {
 			Player player = event.getPlayer();
-			if(delay.containsKey(player.getName()) || player.isFlying() || !notIgnored(player)) {
-				return;
-			}
 			double y = player.getVelocity().getY();
 			if(y % 1 != 0) {
 				String vel = y + "";
@@ -159,6 +156,7 @@ public class FlyFix extends AntiCheatBase {
 			}
 			y = player.getLocation().getY();
 			if(y % 1 == 0 || y % .5 == 0) {
+				delay.put(player.getName(), 12);
 				return;
 			}
 			Location to = event.getTo();
