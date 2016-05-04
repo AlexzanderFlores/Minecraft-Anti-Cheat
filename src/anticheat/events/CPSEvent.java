@@ -1,24 +1,23 @@
 package anticheat.events;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class CPSEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private Player player = null;
+    private String name= null;
     private int cps = 0;
     
-    public CPSEvent(Player player, int cps) {
-    	this.player = player;
+    public CPSEvent(String name, int cps) {
+    	this.name = name;
     	this.cps = cps;
     }
     
-    public Player getPlayer() {
-    	return this.player;
+    public String getName() {
+    	return this.name;
     }
     
-    public double getCPS() {
+    public int getCPS() {
     	return this.cps;
     }
  

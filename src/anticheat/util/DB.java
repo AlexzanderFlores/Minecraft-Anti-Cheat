@@ -17,12 +17,7 @@ public enum DB {
 	NETWORK_ATTACK_DISTANCE_LOGS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), distance DOUBLE, PRIMARY KEY(id)"),
 	NETWORK_CPS_LOGS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), cps INT, PRIMARY KEY(id)"),
 	NETWORK_DISTANCE_LOGS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), distance DOUBLE, PRIMARY KEY(id)"),
-	NETWORK_POWER_BOW_LOGS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), percentage_fast_bow INT, PRIMARY KEY(id)"),
-	
-	STAFF_BAN("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), attached_uuid VARCHAR(40), staff_uuid VARCHAR(40), who_unbanned VARCHAR(40), reason VARCHAR(100), date VARCHAR(10), time VARCHAR(25), unban_date VARCHAR(10), unban_time VARCHAR(25), day INT, active INT, PRIMARY KEY(id)"),
-	STAFF_BAN_PROOF("id INT NOT NULL AUTO_INCREMENT, ban_id INT, proof VARCHAR(100), PRIMARY KEY(id)"),
-	STAFF_REPORTS("id INT NOT NULL AUTO_INCREMENT, reporting VARCHAR(40), uuid VARCHAR(40), text VARCHAR(250), time VARCHAR(25), PRIMARY KEY(id)"),
-	STAFF_CLOSED_REPORTS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), date_closed VARCHAR(10), amount INT, PRIMARY KEY(id)");
+	NETWORK_POWER_BOW_LOGS("id INT NOT NULL AUTO_INCREMENT, uuid VARCHAR(40), percentage_fast_bow INT, PRIMARY KEY(id)");
 	
 	private String table = null;
 	private String keys = "";
@@ -540,7 +535,7 @@ public enum DB {
 	}
 	
 	public enum Databases {
-		NETWORK, STAFF;
+		NETWORK;
 		
 		private Connection connection = null;
 		

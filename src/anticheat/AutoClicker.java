@@ -4,24 +4,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.AsyncPlayerLeaveEvent;
+import anticheat.events.CPSEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
 public class AutoClicker extends AntiCheatBase {
 	private Map<String, Integer> clicks = null;
-	private Map<String, Integer> loggings = null;
+	private Map<String, Integer> fastClicks = null;
+	private Map<String, Integer> seriousViolations = null;
 	
 	public AutoClicker() {
 		super("AutoClicker");
 		clicks = new HashMap<String, Integer>();
-		loggings = new HashMap<String, Integer>();
+		fastClicks = new HashMap<String, Integer>();
+		seriousViolations = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
@@ -29,6 +33,12 @@ public class AutoClicker extends AntiCheatBase {
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
 		if(ticks == 20 && isEnabled()) {
+			for(String name : clicks.keySet()) {
+				int clickCount = clicks.get(name);
+				if(clickCount > 0) {
+					Bukkit.getPluginManager().callEvent(new CPSEvent(name, clickCount));
+				}
+			}
 			clicks.clear();
 		}
 	}
@@ -45,29 +55,39 @@ public class AutoClicker extends AntiCheatBase {
 			}
 			clicks.put(name, ++click);
 			if(click >= 20) {
-				int logging = 1;
-				if(loggings.containsKey(player.getName())) {
-					logging += loggings.get(player.getName());
+				int clicksLogged = 1;
+				if(fastClicks.containsKey(player.getName())) {
+					clicksLogged += fastClicks.get(player.getName());
 				}
-				loggings.put(player.getName(), logging);
+				fastClicks.put(player.getName(), clicksLogged);
+				if(click >= 35) {
+					clicksLogged = 0;
+					if(seriousViolations.containsKey(name)) {
+						click = seriousViolations.get(name);
+					}
+					seriousViolations.put(name, ++clicksLogged);
+					if(clicksLogged >= 3) {
+						ban(player);
+					}
+				}
 				event.setCancelled(true);
 			}
 		}
 	}
 	
 	@EventHandler
-	public void onPlayerLeave(PlayerLeaveEvent event) {
+	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
 		if(isEnabled()) {
-			Player player = event.getPlayer();
-			String name = player.getName();
-			if(loggings.containsKey(name)) {
-				UUID uuid = player.getUniqueId();
-				int timesLogged = loggings.get(name);
-				if(timesLogged > 0) {
-					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + timesLogged + "'");
+			String name = event.getName();
+			if(fastClicks.containsKey(name)) {
+				UUID uuid = event.getUUID();
+				int fastClickCount = fastClicks.get(name);
+				if(fastClickCount > 0) {
+					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + fastClickCount + "'");
 				}
-				loggings.remove(name);
+				fastClicks.remove(name);
 			}
+			seriousViolations.remove(name);
 		}
 	}
 }

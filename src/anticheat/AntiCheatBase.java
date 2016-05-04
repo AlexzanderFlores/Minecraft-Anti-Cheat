@@ -43,6 +43,7 @@ public class AntiCheatBase implements Listener {
 		new SpamBotFix();
 		new WaterWalkDetection();
 		new AutoClicker();
+		new ClickPatternDetector();
 		new KillAura();
 		EventUtil.register(this);
 	}
