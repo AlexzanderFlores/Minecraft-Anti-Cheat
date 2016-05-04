@@ -135,9 +135,7 @@ public class FlyFix extends AntiCheatBase {
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		if(isEnabled()) {
 			Player player = event.getPlayer();
-			if(!(player.getAllowFlight() && player.isFlying())) {
-				delay.put(player.getName(), 20);
-			}
+			delay.put(player.getName(), 20);
 		}
 	}
 	
