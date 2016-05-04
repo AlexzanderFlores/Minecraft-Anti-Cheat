@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import anticheat.AntiCheat;
+import anticheat.events.TimeEvent;
 
 public class Timer implements Listener {
 	private int counter = 0;

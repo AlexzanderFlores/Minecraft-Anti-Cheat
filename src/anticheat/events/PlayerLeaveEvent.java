@@ -1,4 +1,4 @@
-package anticheat.util;
+package anticheat.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,6 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.EventUtil;
+
 public class PlayerLeaveEvent extends Event implements Listener {
     private static final HandlerList handlers = new HandlerList();
     private Player player = null;
@@ -18,9 +21,15 @@ public class PlayerLeaveEvent extends Event implements Listener {
     	EventUtil.register(this);
     }
  
-    public PlayerLeaveEvent(Player player, String leaveMessage) {
+    public PlayerLeaveEvent(final Player player, String leaveMessage) {
     	this.player = player;
     	this.leaveMessage = leaveMessage;
+    	new AsyncDelayedTask(new Runnable() {
+			@Override
+			public void run() {
+				Bukkit.getPluginManager().callEvent(new AsyncPlayerLeaveEvent(player.getUniqueId(), player.getName()));
+			}
+		});
     }
     
     public Player getPlayer() {

@@ -12,9 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import anticheat.AntiCheatBase;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class AttackThroughWalls extends AntiCheatBase {

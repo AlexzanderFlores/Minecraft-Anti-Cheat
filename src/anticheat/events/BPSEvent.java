@@ -1,4 +1,4 @@
-package anticheat.util;
+package anticheat.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

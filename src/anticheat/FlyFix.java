@@ -16,8 +16,8 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import anticheat.events.TimeEvent;
 import anticheat.util.EventUtil;
-import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 import net.md_5.bungee.api.ChatColor;
 

@@ -2,7 +2,8 @@ package anticheat;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import anticheat.util.PlayerLeaveEvent;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.util.DB;
 import anticheat.util.Timer;
 
 public class AntiCheat extends JavaPlugin {
@@ -11,6 +12,7 @@ public class AntiCheat extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+		DB.values();
 		new Timer();
 		new PlayerLeaveEvent();
 		new AntiCheatBase();

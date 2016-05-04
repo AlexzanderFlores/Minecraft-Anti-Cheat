@@ -10,10 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import anticheat.util.BPSEvent;
+import anticheat.events.BPSEvent;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 
 public class BlocksPerSecondLogger implements Listener {
 	private Map<String, Location> lastLocations = null;

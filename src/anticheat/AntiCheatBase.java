@@ -1,21 +1,33 @@
 package anticheat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import anticheat.events.PlayerBanEvent;
+import anticheat.events.PlayerLeaveEvent;
 import anticheat.killaura.AttackThroughWalls;
 import anticheat.killaura.InventoryKillAuraDetection;
 import anticheat.killaura.KillAura;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
 import anticheat.util.Timer;
 
 public class AntiCheatBase implements Listener {
 	private static boolean enabled = true;
+	private List<String> banned = null;
 	private String name = null;
 	private int maxPing = 135;
 	
 	public AntiCheatBase() {
+		banned = new ArrayList<String>();
 		new BlocksPerSecondLogger();
 		new InvisibleFireGlitchFix();
 		new FastBowFix();
@@ -32,6 +44,7 @@ public class AntiCheatBase implements Listener {
 		new WaterWalkDetection();
 		new AutoClicker();
 		new KillAura();
+		EventUtil.register(this);
 	}
 	
 	public AntiCheatBase(String name) {
@@ -52,16 +65,31 @@ public class AntiCheatBase implements Listener {
 	
 	public boolean notIgnored(Player player) {
 		int ping = Timer.getPing(player);
-		return ping > 0 && ping <= maxPing && player.getGameMode() == GameMode.SURVIVAL;
-	}
-	
-	public void kick(Player player) {
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat kick " + player.getName() + " " + this.name);
+		return ping > 0 && ping <= maxPing && player.getGameMode() == GameMode.SURVIVAL && Timer.getTicksPerSecond() >= 19;
 	}
 	
 	public void ban(Player player) {
-		if(notIgnored(player)) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat ban " + player.getName() + " " + this.name);
+		if(notIgnored(player) && !banned.contains(player.getName())) {
+			banned.add(player.getName());
+			Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), name));
+			player.kickPlayer(ChatColor.RED + "You have been banned for cheating");
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + " was banned for cheating"));
+			new AsyncDelayedTask(new Runnable() {
+				@Override
+				public void run() {
+					if(DB.NETWORK_ANTI_CHEAT_DATA.isKeySet("cheat", name)) {
+						int amount = DB.NETWORK_ANTI_CHEAT_DATA.getInt("cheat", name, "bans") + 1;
+						DB.NETWORK_ANTI_CHEAT_DATA.updateInt("bans", amount, "cheat", name);
+					} else {
+						DB.NETWORK_ANTI_CHEAT_DATA.insert("'" + name + "', '1'");
+					}
+				}
+			});
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		banned.remove(event.getPlayer().getName());
 	}
 }

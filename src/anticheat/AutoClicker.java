@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.DB;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 
 public class AutoClicker extends AntiCheatBase {
 	private Map<String, Integer> clicks = null;
@@ -64,7 +64,7 @@ public class AutoClicker extends AntiCheatBase {
 				UUID uuid = player.getUniqueId();
 				int timesLogged = loggings.get(name);
 				if(timesLogged > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_CPS_LOGS " + uuid.toString() + " " + timesLogged);
+					DB.NETWORK_CPS_LOGS.insert("'" + uuid.toString() + "', '" + timesLogged + "'");
 				}
 				loggings.remove(name);
 			}

@@ -16,10 +16,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 
 public class SurvivalFly extends AntiCheatBase {

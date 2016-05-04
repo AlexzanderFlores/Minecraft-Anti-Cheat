@@ -6,8 +6,8 @@ import java.util.Map;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
 
 public class HeadlessFix extends AntiCheatBase {
 	private Map<String, Integer> counters = null;
@@ -28,7 +28,7 @@ public class HeadlessFix extends AntiCheatBase {
 				counter = counters.get(name);
 			}
 			counters.put(name, ++counter);
-			if(counter >= 5) {
+			if(counter >= 3) {
 				ban(event.getPlayer());
 			}
 		}

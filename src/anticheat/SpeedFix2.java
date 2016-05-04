@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,11 +20,12 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import anticheat.util.BPSEvent;
+import anticheat.events.BPSEvent;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.DB;
 import anticheat.util.DelayedTask;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 
 public class SpeedFix2 extends AntiCheatBase {
@@ -174,7 +174,7 @@ public class SpeedFix2 extends AntiCheatBase {
 						average += logging;
 					}
 					if(average > 0) {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_DISTANCE_LOGS " + uuid.toString() + " " + (average / loggings.size()));
+						DB.NETWORK_DISTANCE_LOGS.insert("'" + uuid.toString() + "', '" + (average / loggings.size()) + "'");
 					}
 					violations.get(name).clear();
 					loggings.clear();

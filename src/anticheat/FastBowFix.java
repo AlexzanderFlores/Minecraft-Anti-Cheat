@@ -4,25 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
+import anticheat.events.AsyncPlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.DB;
 import anticheat.util.EventUtil;
-import anticheat.util.PlayerLeaveEvent;
-import anticheat.util.TimeEvent;
 import anticheat.util.Timer;
 
 public class FastBowFix extends AntiCheatBase {
 	private Map<String, Integer> timesFired = null;
-	private Map<String, Integer> loggings = null;
+	private Map<String, Integer> totalTimesFired = null;
+	private Map<String, Integer> fastBowUses = null;
 	
 	public FastBowFix() {
 		super("FastBow");
 		timesFired = new HashMap<String, Integer>();
-		loggings = new HashMap<String, Integer>();
+		totalTimesFired = new HashMap<String, Integer>();
+		fastBowUses = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
 	
@@ -48,13 +50,18 @@ public class FastBowFix extends AntiCheatBase {
 						times = timesFired.get(player.getName());
 					}
 					timesFired.put(player.getName(), ++times);
+					times = 0;
+					if(totalTimesFired.containsKey(player.getName())) {
+						times = totalTimesFired.get(player.getName());
+					}
+					totalTimesFired.put(player.getName(), ++times);
 					if(times >= 2) {
 						if(times >= 10) {
-							int logging = 1;
-							if(loggings.containsKey(player.getName())) {
-								logging += loggings.get(player.getName());
+							int uses = 1;
+							if(fastBowUses.containsKey(player.getName())) {
+								uses += fastBowUses.get(player.getName());
 							}
-							loggings.put(player.getName(), logging);
+							fastBowUses.put(player.getName(), uses);
 						}
 						event.setCancelled(true);
 					}
@@ -66,18 +73,19 @@ public class FastBowFix extends AntiCheatBase {
 	}
 	
 	@EventHandler
-	public void onPlayerLeave(PlayerLeaveEvent event) {
+	public void onAsyncPlayerLeave(AsyncPlayerLeaveEvent event) {
 		if(isEnabled()) {
-			Player player = event.getPlayer();
-			String name = player.getName();
-			UUID uuid = player.getUniqueId();
-			if(loggings.containsKey(name)) {
-				int timesShot = loggings.get(name);
+			String name = event.getName();
+			UUID uuid = event.getUUID();
+			if(fastBowUses.containsKey(name)) {
+				int timesShot = fastBowUses.get(name);
 				if(timesShot > 0) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "antiCheat NETWORK_POWER_BOW_LOGS " + uuid.toString() + " " + timesShot);
+					int percentage = (int) (timesShot * 100.0 / totalTimesFired.get(name));
+					DB.NETWORK_POWER_BOW_LOGS.insert("'" + uuid.toString() + "', '" + percentage + "'");
 				}
-				loggings.remove(name);
+				fastBowUses.remove(name);
 			}
+			totalTimesFired.remove(name);
 		}
 	}
 }
