@@ -22,12 +22,11 @@ import anticheat.util.Timer;
 
 public class AntiCheatBase implements Listener {
 	private static boolean enabled = true;
-	private List<String> banned = null;
+	private List<String> banned = new ArrayList<String>();
 	private String name = null;
 	private int maxPing = 135;
 	
 	public AntiCheatBase() {
-		banned = new ArrayList<String>();
 		new BlocksPerSecondLogger();
 		new InvisibleFireGlitchFix();
 		new FastBowFix();
