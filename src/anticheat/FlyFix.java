@@ -187,7 +187,7 @@ public class FlyFix extends AntiCheatBase {
 				if(flying.containsKey(player.getName())) {
 					counter = flying.get(player.getName());
 				}
-				if(++counter >= 1) {
+				if(++counter >= 10) {
 					Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLYING (TELL LEET THIS ASAP)");
 					//ban(player);
 				} else {
