@@ -34,7 +34,7 @@ public class InventoryKillAuraDetection extends AntiCheatBase {
 	}
 	
 	private int getSecondsLived(Player player) {
-		return secondsLived.get(player.getName());
+		return secondsLived == null ? -1 : secondsLived.get(player.getName());
 	}
 	
 	private boolean ableToCheck(Player player) {
