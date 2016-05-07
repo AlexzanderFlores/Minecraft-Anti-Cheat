@@ -2,6 +2,7 @@ package anticheat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,7 +77,13 @@ public class AntiCheatBase implements Listener {
 		if(notIgnored(player) && !banned.contains(player.getName())) {
 			banned.add(player.getName());
 			if(queue) {
-				DB.NETWORK_ANTI_CHEAT_BAN_QUEUE.insert("'" + player.getUniqueId().toString() + "'");
+				final UUID uuid = player.getUniqueId();
+				new AsyncDelayedTask(new Runnable() {
+					@Override
+					public void run() {
+						DB.NETWORK_ANTI_CHEAT_BAN_QUEUE.insert("'" + uuid.toString() + ", '" + name + "''");
+					}
+				});
 				return;
 			} else {
 				Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), name, queue));
