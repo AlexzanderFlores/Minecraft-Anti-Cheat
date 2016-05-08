@@ -1,6 +1,7 @@
 package anticheat;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -85,15 +86,19 @@ public class FlyFix extends AntiCheatBase {
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
 		if(ticks == 1 && isEnabled()) {
-			Iterator<String> iterator = delay.keySet().iterator();
-			while(iterator.hasNext()) {
-				String name = iterator.next();
-				int counter = delay.get(name);
-				if(--counter <= 0) {
-					iterator.remove();
-				} else {
-					delay.put(name, counter);
+			try {
+				Iterator<String> iterator = delay.keySet().iterator();
+				while(iterator.hasNext()) {
+					String name = iterator.next();
+					int counter = delay.get(name);
+					if(--counter <= 0) {
+						iterator.remove();
+					} else {
+						delay.put(name, counter);
+					}
 				}
+			} catch(ConcurrentModificationException e) {
+				
 			}
 		} else if(ticks == 20 && isEnabled()) {
 			new AsyncDelayedTask(new Runnable() {
@@ -182,7 +187,11 @@ public class FlyFix extends AntiCheatBase {
 				delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
 				return;
 			}
-			if(!delay.containsKey(player.getName()) && to.getY() >= from.getY() && checkForFly(player) && !onEdgeOfBlock(player, true)) {
+			if(to.getY() >= from.getY()) {
+				floating.put(player.getName(), -3);
+				return;
+			}
+			if(!delay.containsKey(player.getName()) && checkForFly(player) && !onEdgeOfBlock(player, true)) {
 				int counter = 0;
 				if(flying.containsKey(player.getName())) {
 					counter = flying.get(player.getName());
