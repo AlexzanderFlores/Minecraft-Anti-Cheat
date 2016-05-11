@@ -187,8 +187,9 @@ public class FlyFix extends AntiCheatBase {
 				delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
 				return;
 			}
-			if(to.getY() >= from.getY()) {
+			if(to.getY() < from.getY()) {
 				floating.put(player.getName(), -3);
+				delay.put(player.getName(), 20);
 				return;
 			}
 			if(!delay.containsKey(player.getName()) && checkForFly(player) && !onEdgeOfBlock(player, true)) {
