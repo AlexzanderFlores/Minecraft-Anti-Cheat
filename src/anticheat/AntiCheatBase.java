@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,23 +81,20 @@ public class AntiCheatBase implements Listener {
 						DB.NETWORK_ANTI_CHEAT_BAN_QUEUE.insert("'" + uuid.toString() + ", '" + name + "''");
 					}
 				});
-				return;
 			} else {
-				Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), name, queue));
-				player.kickPlayer(ChatColor.RED + "You have been banned for cheating");
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + " was banned for cheating"));
-			}
-			new AsyncDelayedTask(new Runnable() {
-				@Override
-				public void run() {
-					if(DB.NETWORK_ANTI_CHEAT_DATA.isKeySet("cheat", name)) {
-						int amount = DB.NETWORK_ANTI_CHEAT_DATA.getInt("cheat", name, "bans") + 1;
-						DB.NETWORK_ANTI_CHEAT_DATA.updateInt("bans", amount, "cheat", name);
-					} else {
-						DB.NETWORK_ANTI_CHEAT_DATA.insert("'" + name + "', '1'");
+				Bukkit.getPluginManager().callEvent(new PlayerBanEvent(player.getUniqueId(), player.getName(), name, queue));
+				new AsyncDelayedTask(new Runnable() {
+					@Override
+					public void run() {
+						if(DB.NETWORK_ANTI_CHEAT_DATA.isKeySet("cheat", name)) {
+							int amount = DB.NETWORK_ANTI_CHEAT_DATA.getInt("cheat", name, "bans") + 1;
+							DB.NETWORK_ANTI_CHEAT_DATA.updateInt("bans", amount, "cheat", name);
+						} else {
+							DB.NETWORK_ANTI_CHEAT_DATA.insert("'" + name + "', '1'");
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 	
