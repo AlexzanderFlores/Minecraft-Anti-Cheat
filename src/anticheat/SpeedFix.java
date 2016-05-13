@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -28,14 +29,14 @@ import anticheat.util.DelayedTask;
 import anticheat.util.EventUtil;
 import anticheat.util.Timer;
 
-public class SpeedFix2 extends AntiCheatBase {
+public class SpeedFix extends AntiCheatBase {
 	private Map<String, List<Long>> violations = null;
 	private Map<String, Integer> delay = null;
 	private List<String> badBlockDelay = null;
 	private String [] badBlocks = null;
 	private long ticks = 0;
 	
-	public SpeedFix2() {
+	public SpeedFix() {
 		super("Speed");
 		violations = new HashMap<String, List<Long>>();
 		delay = new HashMap<String, Integer>();
@@ -77,9 +78,17 @@ public class SpeedFix2 extends AntiCheatBase {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
-		if(isEnabled() && !event.isCancelled() && event.getEntity() instanceof Player) {
+		if(isEnabled() && event.getEntity() instanceof Player && !event.isCancelled()) {
 			Player player = (Player) event.getEntity();
-			delay.put(player.getName(), 20);
+			delay.put(player.getName(), 40);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		if(isEnabled() && event.getEntity() instanceof Player && !event.isCancelled()) {
+			Player player = (Player) event.getEntity();
+			delay.put(player.getName(), 40);
 		}
 	}
 	
