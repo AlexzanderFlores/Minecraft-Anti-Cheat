@@ -12,6 +12,14 @@ public class PlayerBanEvent extends Event {
     private String reason = null;
     private boolean queue = false;
     
+    public PlayerBanEvent(UUID uuid, String reason) {
+    	this(uuid, reason, false);
+    }
+    
+    public PlayerBanEvent(UUID uuid, String reason, boolean queue) {
+    	this(uuid, null, reason, queue);
+    }
+    
     public PlayerBanEvent(UUID uuid, String name, String reason) {
     	this(uuid, name, reason, false);
     }
