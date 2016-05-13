@@ -112,7 +112,7 @@ public class FlyFix extends AntiCheatBase {
 							}
 							if(++counter >= 2) {
 								//player.kickPlayer("Floating too long (Send this to leet)");
-								Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLOATING (TELL LEET THIS ASAP)");
+								//Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLOATING (TELL LEET THIS ASAP)");
 							} else {
 								floating.put(player.getName(), counter);
 							}
