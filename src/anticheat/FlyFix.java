@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
+import anticheat.events.PlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.EventUtil;
@@ -33,6 +34,7 @@ public class FlyFix extends AntiCheatBase {
 	private Map<String, Integer> floating = null;
 	private Map<String, Integer> flying = null;
 	private List<Material> ignores = null;
+	private List<String> alerted = null;
 	
 	public FlyFix() {
 		super("Fly");
@@ -40,6 +42,7 @@ public class FlyFix extends AntiCheatBase {
 		floating = new HashMap<String, Integer>();
 		flying = new HashMap<String, Integer>();
 		ignores = new ArrayList<Material>();
+		alerted = new ArrayList<String>();
 		ignores.add(Material.LADDER);
 		ignores.add(Material.WATER);
 		ignores.add(Material.STATIONARY_WATER);
@@ -213,7 +216,10 @@ public class FlyFix extends AntiCheatBase {
 					counter = flying.get(player.getName());
 				}
 				if(++counter >= 10) {
-					Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLYING (TELL LEET THIS ASAP)");
+					if(!alerted.contains(player.getName())) {
+						alerted.add(player.getName());
+						Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLYING (TELL LEET THIS ASAP)");
+					}
 					//ban(player);
 				} else {
 					flying.put(player.getName(), counter);
@@ -229,5 +235,10 @@ public class FlyFix extends AntiCheatBase {
 				}
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerleave(PlayerLeaveEvent event) {
+		alerted.remove(event.getPlayer().getName());
 	}
 }

@@ -146,7 +146,7 @@ public class SpeedFix extends AntiCheatBase {
 						return;
 					}
 					double distance = event.getDistance();
-					double max = 8;
+					double max = 9;
 					if(distance > max) {
 						List<Long> violation = violations.get(name);
 						if(violation == null) {
