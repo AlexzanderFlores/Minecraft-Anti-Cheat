@@ -119,7 +119,7 @@ public class SpeedFix extends AntiCheatBase {
 		if(isEnabled()) {
 			Player player = event.getPlayer();
 			final String name = player.getName();
-			if(Timer.getPing(player) < getMaxPing()) {
+			if(Timer.getPing(player) > getMaxPing()) {
 				return;
 			}
 			if(!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED)) {
