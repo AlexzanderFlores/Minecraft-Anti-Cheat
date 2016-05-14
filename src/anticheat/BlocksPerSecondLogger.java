@@ -28,7 +28,7 @@ public class BlocksPerSecondLogger implements Listener {
 		long ticks = event.getTicks();
 		if(ticks == 20) {
 			for(Player player : Bukkit.getOnlinePlayers()) {
-				if(player.getTicksLived() >= 20 * 3) {
+				if(player.getTicksLived() >= 20 * 3 && !player.isFlying()) {
 					String name = player.getName();
 					Location pLoc = player.getLocation();
 					Location lLoc = pLoc;
