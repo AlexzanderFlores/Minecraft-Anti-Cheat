@@ -27,6 +27,7 @@ import anticheat.detections.combat.killaura.KillAura;
 import anticheat.detections.movement.AutoSprintFix;
 import anticheat.detections.movement.BlocksPerSecondLogger;
 import anticheat.detections.movement.FlyFix;
+import anticheat.detections.movement.GlideFix;
 import anticheat.detections.movement.HeadlessFix;
 import anticheat.detections.movement.HighJumpFix;
 import anticheat.detections.movement.WaterWalkDetection;
@@ -65,6 +66,7 @@ public class AntiCheatBase implements Listener {
 		new AutoStealFix();
 		new FastEatFix();
 		new HighJumpFix();
+		new GlideFix();
 		EventUtil.register(this);
 	}
 	
