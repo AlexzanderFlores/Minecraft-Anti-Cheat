@@ -45,6 +45,7 @@ public class AntiCheatBase implements Listener {
 		new AntiAutoArmor();
 		new AntiAutoEat();
 		new AntiAutoSprint();
+		new AntiAutoSteal();
 		EventUtil.register(this);
 	}
 	
