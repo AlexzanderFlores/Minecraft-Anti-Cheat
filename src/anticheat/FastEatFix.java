@@ -19,12 +19,12 @@ import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
-public class AntiFastEat extends AntiCheatBase {
+public class FastEatFix extends AntiCheatBase {
 	private int ticks = 0;
 	private Map<String, Integer> startedEating = null;
 	private List<String> reported = null;
 	
-	public AntiFastEat() {
+	public FastEatFix() {
 		super("Fast Eat");
 		startedEating = new HashMap<String, Integer>();
 		reported = new ArrayList<String>();
@@ -33,30 +33,34 @@ public class AntiFastEat extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		ItemStack item = player.getItemInHand();
-		if(item != null && item.getType().isEdible()) {
-			Action action = event.getAction();
-			if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				startedEating.put(player.getName(), ticks);
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			ItemStack item = player.getItemInHand();
+			if(item != null && item.getType().isEdible()) {
+				Action action = event.getAction();
+				if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+					startedEating.put(player.getName(), ticks);
+				}
 			}
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-		Player player = event.getPlayer();
-		if(startedEating.containsKey(player.getName())) {
-			if(ticks - startedEating.get(player.getName()) == 0) {
-				if(!reported.contains(player.getName())) {
-					reported.add(player.getName());
-					final UUID uuid = player.getUniqueId();
-					new AsyncDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							DB.NETWORK_FAST_EAT_TEST.insert("'" + uuid.toString() + "'");
-						}
-					});
+		if(isEnabled()) {
+			Player player = event.getPlayer();
+			if(startedEating.containsKey(player.getName())) {
+				if(ticks - startedEating.get(player.getName()) == 0) {
+					if(!reported.contains(player.getName())) {
+						reported.add(player.getName());
+						final UUID uuid = player.getUniqueId();
+						new AsyncDelayedTask(new Runnable() {
+							@Override
+							public void run() {
+								DB.NETWORK_FAST_EAT_TEST.insert("'" + uuid.toString() + "'");
+							}
+						});
+					}
 				}
 			}
 		}
@@ -65,14 +69,16 @@ public class AntiFastEat extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 1) {
+		if(ticks == 1 && isEnabled()) {
 			++this.ticks;
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		startedEating.remove(event.getPlayer().getName());
-		reported.remove(event.getPlayer().getName());
+		if(isEnabled()) {
+			startedEating.remove(event.getPlayer().getName());
+			reported.remove(event.getPlayer().getName());
+		}
 	}
 }

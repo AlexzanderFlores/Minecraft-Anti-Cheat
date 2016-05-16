@@ -42,12 +42,12 @@ public class AntiCheatBase implements Listener {
 		new AutoClicker();
 		new ClickPatternDetector();
 		new KillAura();
-		new AntiAutoArmor();
-		new AntiAutoEat();
-		new AntiAutoSprint();
-		new AntiAutoSteal();
-		new AntiFastEat();
-		new AntiHighJump();
+		new AutoArmorFix();
+		new AutoEatFix();
+		new AutoSprintFix();
+		new AutoStealFix();
+		new FastEatFix();
+		new HighJumpFix();
 		EventUtil.register(this);
 	}
 	

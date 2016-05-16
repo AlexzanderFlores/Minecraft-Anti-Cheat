@@ -17,11 +17,11 @@ import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
-public class AntiAutoSteal extends AntiCheatBase {
+public class AutoStealFix extends AntiCheatBase {
 	private Map<String, Integer> clicks = null;
 	private List<String> reported = null;
 	
-	public AntiAutoSteal() {
+	public AutoStealFix() {
 		super("Auto Steal");
 		clicks = new HashMap<String, Integer>();
 		reported = new ArrayList<String>();
@@ -31,31 +31,33 @@ public class AntiAutoSteal extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 5) {
+		if(ticks == 5 && isEnabled()) {
 			clicks.clear();
 		}
 	}
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		ClickType type = event.getClick();
-		if(event.getWhoClicked() instanceof Player && (type == ClickType.SHIFT_LEFT || type == ClickType.SHIFT_RIGHT)) {
-			Player player = (Player) event.getWhoClicked();
-			int click = 0;
-			if(clicks.containsKey(player.getName())) {
-				click = clicks.get(player.getName());
-			}
-			clicks.put(player.getName(), ++click);
-			if(click >= 5) {
-				if(!reported.contains(player.getName())) {
-					reported.add(player.getName());
-					final UUID uuid = player.getUniqueId();
-					new AsyncDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							DB.NETWORK_AUTO_STEAL_TEST.insert("'" + uuid.toString() + "'");
-						}
-					});
+		if(isEnabled()) {
+			ClickType type = event.getClick();
+			if(event.getWhoClicked() instanceof Player && (type == ClickType.SHIFT_LEFT || type == ClickType.SHIFT_RIGHT)) {
+				Player player = (Player) event.getWhoClicked();
+				int click = 0;
+				if(clicks.containsKey(player.getName())) {
+					click = clicks.get(player.getName());
+				}
+				clicks.put(player.getName(), ++click);
+				if(click >= 5) {
+					if(!reported.contains(player.getName())) {
+						reported.add(player.getName());
+						final UUID uuid = player.getUniqueId();
+						new AsyncDelayedTask(new Runnable() {
+							@Override
+							public void run() {
+								DB.NETWORK_AUTO_STEAL_TEST.insert("'" + uuid.toString() + "'");
+							}
+						});
+					}
 				}
 			}
 		}
@@ -63,6 +65,8 @@ public class AntiAutoSteal extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		reported.remove(event.getPlayer().getName());
+		if(isEnabled()) {
+			reported.remove(event.getPlayer().getName());
+		}
 	}
 }

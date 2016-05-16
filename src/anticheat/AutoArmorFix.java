@@ -17,11 +17,11 @@ import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
-public class AntiAutoArmor extends AntiCheatBase {
+public class AutoArmorFix extends AntiCheatBase {
 	private Map<String, Integer> lastAction = null;
 	private int ticks = 0;
 	
-	public AntiAutoArmor() {
+	public AutoArmorFix() {
 		super("Auto Armor");
 		lastAction = new HashMap<String, Integer>();
 		EventUtil.register(this);
@@ -29,12 +29,14 @@ public class AntiAutoArmor extends AntiCheatBase {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		lastAction.put(event.getPlayer().getName(), ticks);
+		if(isEnabled()) {
+			lastAction.put(event.getPlayer().getName(), ticks);
+		}
 	}
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if(event.getWhoClicked() instanceof Player) {
+		if(isEnabled() && event.getWhoClicked() instanceof Player) {
 			Player player = (Player) event.getWhoClicked();
 			if(event.getClick() == ClickType.SHIFT_LEFT) {
 				InventoryAction action = event.getAction();
@@ -61,13 +63,15 @@ public class AntiAutoArmor extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 1) {
+		if(ticks == 1 && isEnabled()) {
 			++this.ticks;
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerLeave(PlayerLeaveEvent event) {
-		lastAction.remove(event.getPlayer().getName());
+		if(isEnabled()) {
+			lastAction.remove(event.getPlayer().getName());
+		}
 	}
 }
