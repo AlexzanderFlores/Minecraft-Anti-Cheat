@@ -30,6 +30,7 @@ import anticheat.detections.movement.FlyFix;
 import anticheat.detections.movement.GlideFix;
 import anticheat.detections.movement.HeadlessFix;
 import anticheat.detections.movement.HighJumpFix;
+import anticheat.detections.movement.SpiderFix;
 import anticheat.detections.movement.WaterWalkDetection;
 import anticheat.events.PlayerBanEvent;
 import anticheat.events.PlayerLeaveEvent;
@@ -67,6 +68,7 @@ public class AntiCheatBase implements Listener {
 		new FastEatFix();
 		new HighJumpFix();
 		new GlideFix();
+		new SpiderFix();
 		EventUtil.register(this);
 	}
 	
