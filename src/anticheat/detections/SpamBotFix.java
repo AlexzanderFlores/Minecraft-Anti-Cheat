@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

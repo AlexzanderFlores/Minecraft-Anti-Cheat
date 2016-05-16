@@ -1,4 +1,4 @@
-package anticheat.killaura;
+package anticheat.detections.combat.killaura;
 
 import java.util.Iterator;
 import java.util.List;

@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.movement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;

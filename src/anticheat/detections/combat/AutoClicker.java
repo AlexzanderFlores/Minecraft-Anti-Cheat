@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.combat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.AsyncPlayerLeaveEvent;
 import anticheat.events.CPSEvent;
 import anticheat.events.TimeEvent;

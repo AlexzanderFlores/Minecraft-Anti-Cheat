@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.AsyncDelayedTask;

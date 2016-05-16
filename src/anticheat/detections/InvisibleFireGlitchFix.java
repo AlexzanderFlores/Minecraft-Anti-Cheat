@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections;
 
 import java.util.ArrayList;
 import java.util.List;

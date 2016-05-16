@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.movement;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.AsyncDelayedTask;

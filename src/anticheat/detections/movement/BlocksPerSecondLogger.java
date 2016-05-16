@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.movement;
 
 import java.util.HashMap;
 import java.util.Map;

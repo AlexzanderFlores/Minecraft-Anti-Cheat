@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.movement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.AsyncPlayerLeaveEvent;
 import anticheat.events.BPSEvent;
 import anticheat.events.TimeEvent;

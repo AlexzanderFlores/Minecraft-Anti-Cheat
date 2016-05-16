@@ -1,4 +1,4 @@
-package anticheat.killaura;
+package anticheat.detections.combat.killaura;
 
 import java.util.HashMap;
 import java.util.Map;

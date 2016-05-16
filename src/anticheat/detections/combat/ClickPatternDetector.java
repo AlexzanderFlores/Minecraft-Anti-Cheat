@@ -1,4 +1,4 @@
-package anticheat;
+package anticheat.detections.combat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
+import anticheat.AntiCheatBase;
 import anticheat.events.CPSEvent;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.EventUtil;
