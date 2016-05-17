@@ -159,7 +159,7 @@ public class SpeedFix extends AntiCheatBase {
 						for(long ticks : violation) {
 							if(this.ticks - ticks <= 120) {
 								if(++recent >= 2) {
-									ban(player);
+									//ban(player);
 									return;
 								}
 							}
