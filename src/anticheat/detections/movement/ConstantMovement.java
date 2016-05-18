@@ -18,15 +18,17 @@ import anticheat.util.DB;
 import anticheat.util.EventUtil;
 
 public class ConstantMovement extends AntiCheatBase {
+	private Map<String, Integer> headlessViolations = null;
 	private Map<String, Double> lastMovements = null;
-	private Map<String, Integer> violations = null;
+	private Map<String, Integer> movementViolations = null;
 	private List<String> reported = null; // temporary list for people reported for high jump. To prevent multiple MySQL queries
 	private List<String> reported2 = null; // temporary list for people reported for constant movement. To prevent multiple MySQL queries
 	
 	public ConstantMovement() {
 		super("Constant Movement");
+		headlessViolations = new HashMap<String, Integer>();
 		lastMovements = new HashMap<String, Double>();
-		violations = new HashMap<String, Integer>();
+		movementViolations = new HashMap<String, Integer>();
 		reported = new ArrayList<String>();
 		reported2 = new ArrayList<String>();
 		EventUtil.register(this);
@@ -35,13 +37,30 @@ public class ConstantMovement extends AntiCheatBase {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if(isEnabled()) {
+			Player player = event.getPlayer();
+			String name = player.getName();
 			Location to = event.getTo();
+			
+			/*
+			 * Check for:
+			 * Headless
+			 */
+			float pitch = to.getPitch();
+			if(pitch == 180.0f || pitch == -180.0f) {
+				int headlessViolation = 0;
+				if(headlessViolations.containsKey(name)) {
+					headlessViolation = headlessViolations.get(name);
+				}
+				headlessViolations.put(name, ++headlessViolation);
+				if(headlessViolation >= 3) {
+					ban(player);
+				}
+				return;
+			}
+			
 			Location from = event.getFrom();
 			double difference = to.getY() - from.getY();			
 			if(difference != 0) {
-				Player player = event.getPlayer();
-				String name = player.getName();
-				
 				/*
 				 * Check for:
 				 * Wurst High Jump
@@ -70,10 +89,10 @@ public class ConstantMovement extends AntiCheatBase {
 					double lastMovement = lastMovements.get(name);
 					if(lastMovement == difference) {
 						int violation = 0;
-						if(violations.containsKey(name)) {
-							violation = violations.get(name);
+						if(movementViolations.containsKey(name)) {
+							violation = movementViolations.get(name);
 						}
-						violations.put(name, ++violation);
+						movementViolations.put(name, ++violation);
 						if(violation >= 5) {
 							if(!reported2.contains(player.getName())) {
 								reported2.add(player.getName());
@@ -87,7 +106,7 @@ public class ConstantMovement extends AntiCheatBase {
 							}
 						}
 					} else {
-						violations.remove(name);
+						movementViolations.remove(name);
 					}
 				}
 				lastMovements.put(name, difference);
@@ -100,8 +119,9 @@ public class ConstantMovement extends AntiCheatBase {
 		if(isEnabled()) {
 			Player player = event.getPlayer();
 			String name = player.getName();
+			headlessViolations.remove(name);
 			lastMovements.remove(name);
-			violations.remove(name);
+			movementViolations.remove(name);
 			reported.remove(name);
 			reported2.remove(name);
 		}

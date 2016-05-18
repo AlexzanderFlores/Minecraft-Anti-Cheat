@@ -27,7 +27,6 @@ import anticheat.detections.combat.killaura.KillAura;
 import anticheat.detections.movement.BlocksPerSecondLogger;
 import anticheat.detections.movement.ConstantMovement;
 import anticheat.detections.movement.FlyFix;
-import anticheat.detections.movement.HeadlessFix;
 import anticheat.detections.movement.WaterWalkDetection;
 import anticheat.events.PlayerBanEvent;
 import anticheat.events.PlayerLeaveEvent;
@@ -52,7 +51,6 @@ public class AntiCheatBase implements Listener {
 		//new SpeedFix();
 		new FlyFix();
 		new InventoryKillAuraDetection();
-		new HeadlessFix();
 		new SpamBotFix();
 		new WaterWalkDetection();
 		new AutoClicker();
