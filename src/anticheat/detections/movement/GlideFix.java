@@ -17,10 +17,13 @@ import anticheat.util.EventUtil;
 
 public class GlideFix extends AntiCheatBase {
 	private List<String> reported = null;
+	private List<Double> values = null;
 	
 	public GlideFix() {
 		super("Glide");
 		reported = new ArrayList<String>();
+		values = new ArrayList<Double>();
+		values.add(-0.125); // Wurst
 		EventUtil.register(this);
 	}
 	
@@ -29,7 +32,7 @@ public class GlideFix extends AntiCheatBase {
 		if(isEnabled()) {
 			Location to = event.getTo();
 			Location from = event.getFrom();
-			if(to.getY() - from.getY() == -0.125) {
+			if(values.contains(to.getY() - from.getY())) {
 				Player player = event.getPlayer();
 				if(!reported.contains(player.getName())) {
 					reported.add(player.getName());
