@@ -61,6 +61,7 @@ public class WaterWalkDetection extends AntiCheatBase {
 					ban(player);
 				}
 	        }
+	        
 	        // Check type two
 	        double y = player.getLocation().getY();
 	        Block block = player.getLocation().getBlock().getRelative(0, -1, 0);

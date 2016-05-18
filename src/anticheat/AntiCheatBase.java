@@ -24,13 +24,10 @@ import anticheat.detections.combat.FastBowFix;
 import anticheat.detections.combat.killaura.AttackThroughWalls;
 import anticheat.detections.combat.killaura.InventoryKillAuraDetection;
 import anticheat.detections.combat.killaura.KillAura;
-import anticheat.detections.movement.AutoSprintFix;
 import anticheat.detections.movement.BlocksPerSecondLogger;
+import anticheat.detections.movement.ConstantMovement;
 import anticheat.detections.movement.FlyFix;
-import anticheat.detections.movement.GlideFix;
 import anticheat.detections.movement.HeadlessFix;
-import anticheat.detections.movement.HighJumpFix;
-import anticheat.detections.movement.SpiderFix;
 import anticheat.detections.movement.WaterWalkDetection;
 import anticheat.events.PlayerBanEvent;
 import anticheat.events.PlayerLeaveEvent;
@@ -63,12 +60,10 @@ public class AntiCheatBase implements Listener {
 		new KillAura();
 		new AutoArmorFix();
 		new AutoEatFix();
-		new AutoSprintFix();
+		//new AutoSprintFix(); // TODO: Fix
 		new AutoStealFix();
 		new FastEatFix();
-		new HighJumpFix();
-		new GlideFix();
-		new SpiderFix();
+		new ConstantMovement();
 		EventUtil.register(this);
 	}
 	
