@@ -19,7 +19,7 @@ public class AutoSprintFix extends AntiCheatBase {
 	private List<String> reported = null;
 	
 	public AutoSprintFix() {
-		super("Auto Sprint");
+		super("AutoSprint");
 		reported = new ArrayList<String>();
 		EventUtil.register(this);
 	}

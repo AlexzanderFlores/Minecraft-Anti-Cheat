@@ -1,10 +1,11 @@
 package anticheat.detections.combat.killaura;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,30 +17,51 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import anticheat.AntiCheatBase;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.DB;
 import anticheat.util.EventUtil;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class KillAura extends AntiCheatBase {
+	private List<String> reported = null;
+	
 	public KillAura() {
 		super("KillAura");
+		reported = new ArrayList<String>();
 		EventUtil.register(this);
 	}
 	
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+		if(isEnabled() && event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
 			Player damager = (Player) event.getDamager();
 			Player player = (Player) event.getEntity();
 			Player near = getNearestEntityInSight(damager, 5);
 			double distance = 0;
 			if(near != null) {
 				distance = damager.getLocation().distance(near.getLocation());
-				Bukkit.getLogger().info("Distance = " + distance);
 			}
 			if(near != player && distance > 2) {
-				Bukkit.getLogger().info(damager.getName() + " damaging player out of sight <<<===");
+				if(!reported.contains(damager.getName())) {
+					reported.add(damager.getName());
+					final UUID uuid = damager.getUniqueId();
+					new AsyncDelayedTask(new Runnable() {
+						@Override
+						public void run() {
+							DB.NETWORK_KILL_AURA_TEST.insert("'" + uuid.toString() + "'");
+						}
+					});
+				}
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerLeave(PlayerLeaveEvent event) {
+		if(isEnabled()) {
+			reported.remove(event.getPlayer().getName());
 		}
 	}
 	

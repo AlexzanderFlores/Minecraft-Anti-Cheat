@@ -23,7 +23,7 @@ public class AutoArmorFix extends AntiCheatBase {
 	private int ticks = 0;
 	
 	public AutoArmorFix() {
-		super("Auto Armor");
+		super("AutoArmor");
 		lastAction = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}

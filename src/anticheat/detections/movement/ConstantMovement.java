@@ -25,7 +25,7 @@ public class ConstantMovement extends AntiCheatBase {
 	private List<String> reported2 = null; // temporary list for people reported for constant movement. To prevent multiple MySQL queries
 	
 	public ConstantMovement() {
-		super("Constant Movement");
+		super("ConstantMovement");
 		headlessViolations = new HashMap<String, Integer>();
 		lastMovements = new HashMap<String, Double>();
 		movementViolations = new HashMap<String, Integer>();
