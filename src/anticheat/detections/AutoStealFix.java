@@ -32,7 +32,7 @@ public class AutoStealFix extends AntiCheatBase {
 	@EventHandler
 	public void onTime(TimeEvent event) {
 		long ticks = event.getTicks();
-		if(ticks == 5 && isEnabled()) {
+		if(ticks == 2 && isEnabled()) {
 			clicks.clear();
 		}
 	}
