@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.net.URL;
 
 public class AntiCheat extends JavaPlugin {
+
+    //TODO: Obfuscating? and/or storing key in database
+
     private static AntiCheat instance = null;
 
     @Override
