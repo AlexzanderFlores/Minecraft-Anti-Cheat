@@ -1,2 +1,0 @@
-# AntiCheat
-OutsideTheBlock anti-cheat
