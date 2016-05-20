@@ -98,7 +98,7 @@ public class FlyFix extends AntiCheatBase {
                     }
                 }
             } catch (ConcurrentModificationException e) {
-
+                // ignored
             }
         } else if (ticks == 20 && isEnabled()) {
             new AsyncDelayedTask(new Runnable() {
@@ -196,10 +196,6 @@ public class FlyFix extends AntiCheatBase {
             Location to = event.getTo();
             Location from = event.getFrom();
             Block below = to.getBlock().getRelative(0, -1, 0);
-            if (to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
-                delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
-                return;
-            }
             if (to.getY() < from.getY()) {
                 floating.put(player.getName(), -3);
                 delay.put(player.getName(), 20);

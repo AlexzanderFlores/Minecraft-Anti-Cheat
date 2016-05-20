@@ -15,7 +15,7 @@ public class SpamBotFix implements Listener {
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         if (Timer.getPing(event.getPlayer()) == 0) {
-            event.getPlayer().sendMessage(ChatColor.RED + "You cannot talk with your current connection (0 ping)");
+            event.getPlayer().sendMessage(ChatColor.RED + "You cannot talk with your current connection (0 ping)!");
             event.setCancelled(true);
         }
     }

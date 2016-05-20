@@ -98,18 +98,6 @@ public class SpeedFix extends AntiCheatBase {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (isEnabled()) {
-            Player player = event.getPlayer();
-            Location to = event.getTo();
-            Block below = to.getBlock().getRelative(0, -1, 0);
-            if (to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
-                delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
-            }
-        }
-    }
-
-    @EventHandler
     public void onBPS(BPSEvent event) {
         if (isEnabled()) {
             Player player = event.getPlayer();

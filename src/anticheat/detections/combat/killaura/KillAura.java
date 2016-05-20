@@ -5,11 +5,11 @@ import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;
 import anticheat.util.EventUtil;
-import net.minecraft.server.v1_8_R3.AxisAlignedBB;
+import net.minecraft.server.v1_7_R4.AxisAlignedBB;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -42,12 +42,7 @@ public class KillAura extends AntiCheatBase {
                 if (!reported.contains(damager.getName())) {
                     reported.add(damager.getName());
                     final UUID uuid = damager.getUniqueId();
-                    new AsyncDelayedTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            DB.NETWORK_KILL_AURA_TEST.insert("'" + uuid.toString() + "'");
-                        }
-                    });
+                    new AsyncDelayedTask(() -> DB.NETWORK_KILL_AURA_TEST.insert("'" + uuid.toString() + "'"));
                 }
             }
         }
@@ -69,7 +64,7 @@ public class KillAura extends AntiCheatBase {
                 iterator.remove();
             }
         }
-        List<Block> sight = player.getLineOfSight((Set) null, range); //Get the blocks in the player's line of sight (the Set is null to not ignore any blocks)
+        List<Block> sight = player.getLineOfSight(null, range); //Get the blocks in the player's line of sight (the Set is null to not ignore any blocks)
         for (Block block : sight) { //For each block in the list
             if (block.getType() != Material.AIR) { //If the block is not air -> obstruction reached, exit loop/seach
                 break;
@@ -79,7 +74,7 @@ public class KillAura extends AntiCheatBase {
             AxisAlignedBB blockBoundingBox = AxisAlignedBB.a(low.getX(), low.getY(), low.getZ(), high.getX(), high.getY(), high.getZ()); //The bounding or collision box of the block
             for (Entity entity : entities) { //For every living entity in the player's range
                 //If the entity is truly close enough and the bounding box of the block (1x1x1 box) intersects with the entity's bounding box, return it
-                if (entity.getLocation().distance(player.getEyeLocation()) <= range && ((CraftEntity) entity).getHandle().getBoundingBox().b(blockBoundingBox) && entity instanceof Player) {
+                if (entity.getLocation().distance(player.getEyeLocation()) <= range && ((CraftEntity) entity).getHandle().boundingBox.b(blockBoundingBox) && entity instanceof Player) {
                     return (Player) entity;
                 }
             }
