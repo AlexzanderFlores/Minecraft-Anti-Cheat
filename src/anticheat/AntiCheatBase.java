@@ -13,20 +13,28 @@ import anticheat.events.PlayerBanEvent;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.*;
 import anticheat.util.Timer;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class AntiCheatBase implements Listener, PluginMessageListener {
     private static boolean enabled = true;
     private List<String> banned = new ArrayList<String>();
+    private List<UUID> silentAdmins = new ArrayList<>();
+    private List<UUID> silentLoginAdmins = new ArrayList<>();
     private String name = null;
     private int maxPing = 135;
 
@@ -108,13 +116,97 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         }
     }
 
-    public void logAnticheatMessage(String msg) {
+    public void logHackMessage(String msg) {
         Bukkit.getConsoleSender().sendMessage(msg);
         for (Player online : Bukkit.getOnlinePlayers()) {
             if (online.isOp() || online.hasPermission("outsidetheblock.anticheat.alerts")) {
-                MessageUtil.messagePrefix(online, MessageUtil.MessageType.BAD, msg);
+                if (!(isSilent(online))) {
+                    MessageUtil.messagePrefix(online, MessageUtil.MessageType.BAD, msg);
+                }
             }
         }
+    }
+
+    public void logLoginMessage(String msg) {
+        Bukkit.getConsoleSender().sendMessage(msg);
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.isOp() || online.hasPermission("outsidetheblock.anticheat.alerts")) {
+                if (!(isSilentLogin(online))) {
+                    MessageUtil.messagePrefix(online, MessageUtil.MessageType.BAD, msg);
+                }
+            }
+        }
+    }
+
+    public void toggleSilent(Player player) {
+        if (isSilent(player)) {
+            silentAdmins.remove(player.getUniqueId());
+            MessageUtil.messagePrefix(player, MessageUtil.MessageType.GOOD, "You have enabled anti-cheat alerts!");
+        } else {
+            silentAdmins.add(player.getUniqueId());
+            MessageUtil.messagePrefix(player, MessageUtil.MessageType.BAD, "You have disabled anti-cheat alerts!");
+        }
+    }
+
+    public void toggleSilentLogin(Player player) {
+        if (isSilentLogin(player)) {
+            silentLoginAdmins.remove(player.getUniqueId());
+            MessageUtil.messagePrefix(player, MessageUtil.MessageType.GOOD, "You have enabled login alerts!");
+        } else {
+            silentLoginAdmins.add(player.getUniqueId());
+            MessageUtil.messagePrefix(player, MessageUtil.MessageType.BAD, "You have disabled login alerts!");
+        }
+    }
+
+    public boolean isSilent(Player player) {
+        return silentAdmins.contains(player.getUniqueId());
+    }
+
+    public boolean isSilentLogin(Player player) {
+        return silentLoginAdmins.contains(player.getUniqueId());
+    }
+
+    public void setCheckMode(Player player, boolean admin) {
+        if (admin) {
+            if (!(isInCheckMode(player))) {
+                player.setMetadata("check-mode", new FixedMetadataValue(AntiCheat.getInstance(), true));
+                player.setAllowFlight(true);
+                player.setFlying(true);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
+
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.REMOVE_ENTITY_EFFECT);
+                packet.getIntegers().write(0, player.getEntityId());
+                packet.getIntegers().write(1, PotionEffectType.INVISIBILITY.getId());
+
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+                MessageUtil.messagePrefix(player, MessageUtil.MessageType.GOOD, "You are now in player check mode!");
+            } else {
+                MessageUtil.messagePrefix(player, MessageUtil.MessageType.BAD, "You are already in player check mode!");
+            }
+        } else {
+            if (isInCheckMode(player)) {
+                player.removeMetadata("check-mode", AntiCheat.getInstance());
+                player.setAllowFlight(false);
+                player.setFlying(false);
+                player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                MessageUtil.messagePrefix(player, MessageUtil.MessageType.GOOD, "You are no longer in player check mode!");
+            } else {
+                MessageUtil.messagePrefix(player, MessageUtil.MessageType.BAD, "You are not in player check mode!");
+            }
+        }
+    }
+
+    public void toggleCheckMode(Player player) {
+        setCheckMode(player, !(isInCheckMode(player)));
+    }
+
+    public boolean isInCheckMode(Player player) {
+        return player.hasMetadata("check-mode");
     }
 
     @EventHandler
@@ -142,7 +234,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         switch (channel) {
             case "BSprint":
                 if (message.length > 0 && message[0] == 5) {
-                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eBetter Sprint &cmod!");
+                    logLoginMessage("&e" + player.getName() + " &clogged in using &eBetter Sprint &cmod!");
                     try {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         DataOutputStream dos = new DataOutputStream(baos);
@@ -163,7 +255,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
                         chars[i] = dis.readByte();
                     }
                     String labyModString = new String(chars);
-                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &e" + labyModString + " &cmod!");
+                    logLoginMessage("&e" + player.getName() + " &clogged in using &e" + labyModString + " &cmod!");
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -187,7 +279,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
                         chars[i] = dis.readByte();
                     }
                     String version = new String(chars);
-                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eWorld Downloader " + version + " &cmod!");
+                    logLoginMessage("&e" + player.getName() + " &clogged in using &eWorld Downloader " + version + " &cmod!");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -205,7 +297,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
                 break;
             case "5zig_Set":
                 if (message.length > 0 && message[0] >= 2) {
-                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &e5zig &cmod!");
+                    logLoginMessage("&e" + player.getName() + " &clogged in using &e5zig &cmod!");
                     try {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         DataOutputStream dos = new DataOutputStream(baos);
@@ -218,7 +310,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
                 break;
             case "DIPermissions":
                 if (message.length > 0) {
-                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eDamage Indicators &cmod!");
+                    logLoginMessage("&e" + player.getName() + " &clogged in using &eDamage Indicators &cmod!");
                     try {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         DataOutputStream dos = new DataOutputStream(baos);
