@@ -20,9 +20,12 @@ public class AntiCheat extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("Please wait, we are confirming your API key with OutsideTheBlock...");
+
+        String keyShouldBeReturned = DB.NETWORK_TWO_FACTOR_DATA.getString("id", 1, "key");
         String key = checkVersion();
+
         if (key != null) {
-            if (key.equalsIgnoreCase("4vA0DmTnU00XhIGHXg9i35y57OARvtqr")) {
+            if (key.equalsIgnoreCase(keyShouldBeReturned)) {
                 getLogger().info("Your key has successfully been confirmed with OutsideTheBlock. Thank you!");
             } else {
                 getLogger().severe("WARNING! We could not confirm your plugin install with OutsideTheBlock.");
@@ -47,6 +50,7 @@ public class AntiCheat extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        instance = null;
         for (Databases database : Databases.values()) {
             database.disconnect();
         }
