@@ -188,14 +188,17 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
                     }
                     String version = new String(chars);
                     logAnticheatMessage("&e" + player.getName() + " &clogged in using &eWorld Downloader " + version + " &cmod!");
-
-                    if (player.getListeningPluginChannels().contains("WDL|CONTROL")) {
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        DataOutputStream dos = new DataOutputStream(baos);
-                        dos.writeInt(1);
-                        dos.writeBoolean(false);
-                        player.sendPluginMessage(AntiCheat.getInstance(), "WDL|CONTROL", baos.toByteArray());
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "WDL|CONTROL":
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    DataOutputStream dos = new DataOutputStream(baos);
+                    dos.writeInt(1);
+                    dos.writeBoolean(false);
+                    player.sendPluginMessage(AntiCheat.getInstance(), "WDL|CONTROL", baos.toByteArray());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
