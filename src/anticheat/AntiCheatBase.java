@@ -11,20 +11,18 @@ import anticheat.detections.movement.FlyFix;
 import anticheat.detections.movement.WaterWalkDetection;
 import anticheat.events.PlayerBanEvent;
 import anticheat.events.PlayerLeaveEvent;
-import anticheat.util.AsyncDelayedTask;
-import anticheat.util.DB;
-import anticheat.util.EventUtil;
+import anticheat.util.*;
 import anticheat.util.Timer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.io.*;
+import java.util.*;
 
 public class AntiCheatBase implements Listener, PluginMessageListener {
     private static boolean enabled = true;
@@ -109,13 +107,109 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         }
     }
 
+    public void logAnticheatMessage(String msg) {
+        Bukkit.getConsoleSender().sendMessage(msg);
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.isOp() || online.hasPermission("outsidetheblock.anticheat.alerts")) {
+                MessageUtil.messagePrefix(online, MessageUtil.MessageType.BAD, msg);
+            }
+        }
+    }
+
     @EventHandler
     public void onPlayerLeave(PlayerLeaveEvent event) {
         banned.remove(event.getPlayer().getName());
     }
 
     @Override
-    public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
+    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+        switch (channel) {
+            case "BSprint":
+                if (message.length > 0 && message[0] == 5) {
+                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eBetter Sprint &cmod!");
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        DataOutputStream dos = new DataOutputStream(baos);
+                        dos.writeByte(1);
+                        player.sendPluginMessage(AntiCheat.getInstance(), "BSM", baos.toByteArray());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case "LABYMOD":
+                try {
+                    ByteArrayInputStream is = new ByteArrayInputStream(message);
+                    DataInputStream dis = new DataInputStream(is);
+                    int length = dis.readByte();
+                    byte[] chars = new byte[length];
+                    for (int i = 0; i < chars.length; i++) {
+                        chars[i] = dis.readByte();
+                    }
+                    String labyModString = new String(chars);
+                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &e" + labyModString + " &cmod!");
 
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(baos);
+                    Map<String, Boolean> disableSettings = new HashMap<>();
+                    disableSettings.put("food", false);
+                    disableSettings.put("nick", false);
+                    disableSettings.put("blockbuild", false);
+                    oos.writeObject(disableSettings);
+                    player.sendPluginMessage(AntiCheat.getInstance(), "LABYMOD", baos.toByteArray());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "WDL|INIT":
+                try {
+                    ByteArrayInputStream is = new ByteArrayInputStream(message);
+                    DataInputStream dis = new DataInputStream(is);
+                    int length = dis.readByte();
+                    byte[] chars = new byte[length];
+                    for (int i = 0; i < chars.length; i++) {
+                        chars[i] = dis.readByte();
+                    }
+                    String version = new String(chars);
+                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eWorld Downloader " + version + " &cmod!");
+
+                    if (player.getListeningPluginChannels().contains("WDL|CONTROL")) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        DataOutputStream dos = new DataOutputStream(baos);
+                        dos.writeInt(1);
+                        dos.writeBoolean(false);
+                        player.sendPluginMessage(AntiCheat.getInstance(), "WDL|CONTROL", baos.toByteArray());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "5zig_Set":
+                if (message.length > 0 && message[0] >= 2) {
+                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &e5zig &cmod!");
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        DataOutputStream dos = new DataOutputStream(baos);
+                        dos.writeByte(0x08 | 0x10);
+                        player.sendPluginMessage(AntiCheat.getInstance(), "5zig_Set", baos.toByteArray());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case "DIPermissions":
+                if (message.length > 0) {
+                    logAnticheatMessage("&e" + player.getName() + " &clogged in using &eDamage Indicators &cmod!");
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        DataOutputStream dos = new DataOutputStream(baos);
+                        dos.writeByte(0x1);
+                        player.sendPluginMessage(AntiCheat.getInstance(), "DIPermissions", baos.toByteArray());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+        }
     }
 }
