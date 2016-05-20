@@ -52,6 +52,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         new FastEatFix();
         new ConstantMovement();
         EventUtil.register(this);
+        registerPluginChannels(AntiCheat.getInstance());
     }
 
     public AntiCheatBase(String name) {
@@ -119,6 +120,21 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
     @EventHandler
     public void onPlayerLeave(PlayerLeaveEvent event) {
         banned.remove(event.getPlayer().getName());
+    }
+
+    public void registerPluginChannels(AntiCheat instance) {
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "MC|Brand", this);
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "PERMISSIONSREPL", this);
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "BSprint", this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(instance, "BSM");
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "WDL|INIT", this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(instance, "WDL|CONTROL");
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "LABYMOD", this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(instance, "LABYMOD");
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "5zig_Set", this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(instance, "5zig_Set");
+        Bukkit.getMessenger().registerIncomingPluginChannel(instance, "DIPermissions", this);
+        Bukkit.getMessenger().registerOutgoingPluginChannel(instance, "DIPermissions");
     }
 
     @Override
