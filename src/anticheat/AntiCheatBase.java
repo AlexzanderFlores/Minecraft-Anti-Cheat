@@ -30,6 +30,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@SuppressWarnings("deprecation")
 public class AntiCheatBase implements Listener, PluginMessageListener {
     private static boolean enabled = true;
     private List<String> banned = new ArrayList<String>();
