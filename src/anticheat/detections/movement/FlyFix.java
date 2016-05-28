@@ -1,13 +1,15 @@
 package anticheat.detections.movement;
 
-import anticheat.AntiCheatBase;
-import anticheat.events.PlayerLeaveEvent;
-import anticheat.events.TimeEvent;
-import anticheat.util.AsyncDelayedTask;
-import anticheat.util.EventUtil;
-import anticheat.util.Timer;
-import net.md_5.bungee.api.ChatColor;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,22 +24,28 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import anticheat.AntiCheatBase;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
+import anticheat.util.Timer;
 
 public class FlyFix extends AntiCheatBase {
     private Map<String, Integer> delay = null;
     private Map<String, Integer> floating = null;
+    private Map<String, Integer> floatingViolations = null;
     private Map<String, Integer> flying = null;
     private List<Material> ignores = null;
-    private List<String> alerted = null;
 
     public FlyFix() {
         super("Fly");
         delay = new HashMap<String, Integer>();
         floating = new HashMap<String, Integer>();
+        floatingViolations = new HashMap<String, Integer>();
         flying = new HashMap<String, Integer>();
         ignores = new ArrayList<Material>();
-        alerted = new ArrayList<String>();
         ignores.add(Material.LADDER);
         ignores.add(Material.WATER);
         ignores.add(Material.STATIONARY_WATER);
@@ -118,6 +126,21 @@ public class FlyFix extends AntiCheatBase {
                                     location.setY(location.getBlockY() - 1);
                                 }
                                 player.teleport(location.add(0, 1, 0));
+                                int violation = 0;
+                                if(floatingViolations.containsKey(player.getName())) {
+                                	violation = floatingViolations.get(player.getName());
+                                }
+                                floatingViolations.put(player.getName(), ++violation);
+                                if(violation >= 2) {
+                                	final UUID uuid = player.getUniqueId();
+                                	if(DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.isUUIDSet(uuid)) {
+                                		int amount = DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.getInt("uuid", uuid.toString(), "amount") + 1;
+                                		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.updateInt("amount", amount, "uuid", uuid.toString());
+                                	} else {
+                                		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.insert("'" + uuid.toString() + "', '1'");
+                                	}
+                                	player.kickPlayer(ChatColor.RED + "Kicked for floating");
+                                }
                             } else {
                                 floating.put(player.getName(), counter);
                             }
@@ -211,10 +234,14 @@ public class FlyFix extends AntiCheatBase {
                     counter = flying.get(player.getName());
                 }
                 if (++counter >= 10) {
-                    if (!alerted.contains(player.getName())) {
-                        alerted.add(player.getName());
-                        Bukkit.broadcastMessage(ChatColor.DARK_RED + player.getName() + " KICKED FOR FLYING (TELL LEET THIS ASAP)");
-                    }
+                	final UUID uuid = player.getUniqueId();
+                	if(DB.NETWORK_ANTI_CHEAT_FLY_KICKS.isUUIDSet(uuid)) {
+                		int amount = DB.NETWORK_ANTI_CHEAT_FLY_KICKS.getInt("uuid", uuid.toString(), "amount") + 1;
+                		DB.NETWORK_ANTI_CHEAT_FLY_KICKS.updateInt("amount", amount, "uuid", uuid.toString());
+                	} else {
+                		DB.NETWORK_ANTI_CHEAT_FLY_KICKS.insert("'" + uuid.toString() + "', '1'");
+                	}
+                    player.kickPlayer(org.bukkit.ChatColor.RED + "Kicked for flying");
                     //ban(player);
                 } else {
                     flying.put(player.getName(), counter);
@@ -234,6 +261,6 @@ public class FlyFix extends AntiCheatBase {
 
     @EventHandler
     public void onPlayerleave(PlayerLeaveEvent event) {
-        alerted.remove(event.getPlayer().getName());
+    	floatingViolations.remove(event.getPlayer().getName());
     }
 }
