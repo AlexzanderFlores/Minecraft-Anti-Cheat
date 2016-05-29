@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -114,6 +115,15 @@ public class SpeedFix extends AntiCheatBase {
                 delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
             }
         }
+    }
+    
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+    	if(isEnabled()) {
+    		Player player = event.getPlayer();
+    		violations.remove(player.getName());
+    		delay.put(player.getName(), 20);
+    	}
     }
 
     @EventHandler
