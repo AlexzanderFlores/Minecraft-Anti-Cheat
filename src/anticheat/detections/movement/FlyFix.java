@@ -29,6 +29,7 @@ import anticheat.events.PlayerLeaveEvent;
 import anticheat.events.TimeEvent;
 import anticheat.util.AsyncDelayedTask;
 import anticheat.util.DB;
+import anticheat.util.DelayedTask;
 import anticheat.util.EventUtil;
 import anticheat.util.Timer;
 
@@ -139,7 +140,13 @@ public class FlyFix extends AntiCheatBase {
                                 	} else {
                                 		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.insert("'" + uuid.toString() + "', '1'");
                                 	}
-                                	player.kickPlayer(ChatColor.RED + "Kicked for floating");
+                                	final Player finalPlayer = player;
+                                	new DelayedTask(new Runnable() {
+										@Override
+										public void run() {
+											finalPlayer.kickPlayer(ChatColor.RED + "Kicked for floating");
+										}
+									});
                                 }
                             } else {
                                 floating.put(player.getName(), counter);
