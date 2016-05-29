@@ -121,7 +121,7 @@ public class SpeedFix extends AntiCheatBase {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
     	if (isEnabled()) {
     		Player player = event.getPlayer();
-    		delay.put(player.getName(), 20);
+    		delay.put(player.getName(), 60);
     		violations.remove(player.getName());
     	}
     }
