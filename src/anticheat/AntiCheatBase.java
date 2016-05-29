@@ -36,6 +36,7 @@ import anticheat.detections.combat.AttackDistanceLogger;
 import anticheat.detections.combat.AutoArmorFix;
 import anticheat.detections.combat.AutoClicker;
 import anticheat.detections.combat.AutoCritFix;
+import anticheat.detections.combat.AutoRegenFix;
 import anticheat.detections.combat.ClickPatternDetector;
 import anticheat.detections.combat.FastBowFix;
 import anticheat.detections.combat.killaura.AttackThroughWalls;
@@ -84,6 +85,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         new AutoStealFix();
         new FastEatFix();
         new ConstantMovement();
+        new AutoRegenFix();
         EventUtil.register(this);
         registerPluginChannels(AntiCheat.getInstance());
     }
