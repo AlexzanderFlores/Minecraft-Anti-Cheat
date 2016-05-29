@@ -1,21 +1,18 @@
 package anticheat;
 
-import anticheat.detections.*;
-import anticheat.detections.combat.*;
-import anticheat.detections.combat.killaura.AttackThroughWalls;
-import anticheat.detections.combat.killaura.InventoryKillAuraDetection;
-import anticheat.detections.combat.killaura.KillAura;
-import anticheat.detections.movement.BlocksPerSecondLogger;
-import anticheat.detections.movement.ConstantMovement;
-import anticheat.detections.movement.FlyFix;
-import anticheat.detections.movement.WaterWalkDetection;
-import anticheat.events.PlayerBanEvent;
-import anticheat.events.PlayerLeaveEvent;
-import anticheat.util.*;
-import anticheat.util.Timer;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -26,9 +23,36 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+
+import anticheat.detections.AutoEatFix;
+import anticheat.detections.AutoStealFix;
+import anticheat.detections.FastEatFix;
+import anticheat.detections.InvisibleFireGlitchFix;
+import anticheat.detections.SpamBotFix;
+import anticheat.detections.combat.AttackDistanceLogger;
+import anticheat.detections.combat.AutoArmorFix;
+import anticheat.detections.combat.AutoClicker;
+import anticheat.detections.combat.AutoCritFix;
+import anticheat.detections.combat.ClickPatternDetector;
+import anticheat.detections.combat.FastBowFix;
+import anticheat.detections.combat.killaura.AttackThroughWalls;
+import anticheat.detections.combat.killaura.InventoryKillAuraDetection;
+import anticheat.detections.combat.killaura.KillAura;
+import anticheat.detections.movement.BlocksPerSecondLogger;
+import anticheat.detections.movement.ConstantMovement;
+import anticheat.detections.movement.FlyFix;
+import anticheat.detections.movement.SpeedFix;
+import anticheat.detections.movement.WaterWalkDetection;
+import anticheat.events.PlayerBanEvent;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
+import anticheat.util.MessageUtil;
+import anticheat.util.Timer;
 
 @SuppressWarnings("deprecation")
 public class AntiCheatBase implements Listener, PluginMessageListener {
@@ -46,7 +70,7 @@ public class AntiCheatBase implements Listener, PluginMessageListener {
         new AutoCritFix();
         new AttackThroughWalls();
         new AttackDistanceLogger();
-        //new SpeedFix();
+        new SpeedFix();
         new FlyFix();
         new InventoryKillAuraDetection();
         new SpamBotFix();

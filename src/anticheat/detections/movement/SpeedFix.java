@@ -1,13 +1,13 @@
 package anticheat.detections.movement;
 
-import anticheat.AntiCheatBase;
-import anticheat.events.AsyncPlayerLeaveEvent;
-import anticheat.events.BPSEvent;
-import anticheat.events.TimeEvent;
-import anticheat.util.DB;
-import anticheat.util.DelayedTask;
-import anticheat.util.EventUtil;
-import anticheat.util.Timer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,7 +22,14 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import anticheat.AntiCheatBase;
+import anticheat.events.AsyncPlayerLeaveEvent;
+import anticheat.events.BPSEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.DB;
+import anticheat.util.DelayedTask;
+import anticheat.util.EventUtil;
+import anticheat.util.Timer;
 
 public class SpeedFix extends AntiCheatBase {
     private Map<String, List<Long>> violations = null;
@@ -115,11 +122,12 @@ public class SpeedFix extends AntiCheatBase {
             Player player = event.getPlayer();
             final String name = player.getName();
             if (Timer.getPing(player) > getMaxPing()) {
+            	violations.remove(name);
                 return;
             }
             if (!player.isFlying() && player.getVehicle() == null && !player.hasPotionEffect(PotionEffectType.SPEED)) {
-                if (notIgnored(player) && !badBlockDelay.contains(name) && !badBlockDelay.contains(name) && !delay.containsKey(name) && player.getWalkSpeed() == 0.2f) {
-                    Location location = player.getLocation();
+            	if (notIgnored(player) && !badBlockDelay.contains(name) && !delay.containsKey(name) && player.getWalkSpeed() == 0.2f) {
+                	Location location = player.getLocation();
                     for (int a = -2; a <= 0; ++a) {
                         Block block = location.getBlock().getRelative(0, a, 0);
                         for (String badBlock : badBlocks) {
@@ -133,17 +141,20 @@ public class SpeedFix extends AntiCheatBase {
                                         }
                                     }, 20 * 2);
                                 }
+                                violations.remove(name);
                                 return;
                             }
                         }
                     }
                     if (location.getBlock().getRelative(0, 2, 0).getType() != Material.AIR) {
-                        return;
+                    	violations.remove(name);
+                    	return;
                     }
                     double distance = event.getDistance();
+                    Bukkit.getLogger().info(name + ": " + distance);
                     double max = 9;
                     if (distance > max) {
-                        List<Long> violation = violations.get(name);
+                    	List<Long> violation = violations.get(name);
                         if (violation == null) {
                             violation = new ArrayList<Long>();
                         }
@@ -153,11 +164,13 @@ public class SpeedFix extends AntiCheatBase {
                         for (long ticks : violation) {
                             if (this.ticks - ticks <= 120) {
                                 if (++recent >= 2) {
-                                    //ban(player);
+                                    ban(player);
                                     return;
                                 }
                             }
                         }
+                    } else {
+                    	violations.remove(name);
                     }
                 }
             }
