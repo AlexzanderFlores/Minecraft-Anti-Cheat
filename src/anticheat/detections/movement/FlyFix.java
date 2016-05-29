@@ -134,8 +134,8 @@ public class FlyFix extends AntiCheatBase {
                                 if(violation >= 2) {
                                 	final UUID uuid = player.getUniqueId();
                                 	if(DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.isUUIDSet(uuid)) {
-                                		int amount = DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.getInt("uuid", uuid.toString(), "amount") + 1;
-                                		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.updateInt("amount", amount, "uuid", uuid.toString());
+                                		int amount = DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.getInt("uuid", uuid.toString(), "kicks") + 1;
+                                		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.updateInt("kicks", amount, "uuid", uuid.toString());
                                 	} else {
                                 		DB.NETWORK_ANTI_CHEAT_FLOATING_KICKS.insert("'" + uuid.toString() + "', '1'");
                                 	}
@@ -236,8 +236,8 @@ public class FlyFix extends AntiCheatBase {
                 if (++counter >= 10) {
                 	final UUID uuid = player.getUniqueId();
                 	if(DB.NETWORK_ANTI_CHEAT_FLY_KICKS.isUUIDSet(uuid)) {
-                		int amount = DB.NETWORK_ANTI_CHEAT_FLY_KICKS.getInt("uuid", uuid.toString(), "amount") + 1;
-                		DB.NETWORK_ANTI_CHEAT_FLY_KICKS.updateInt("amount", amount, "uuid", uuid.toString());
+                		int amount = DB.NETWORK_ANTI_CHEAT_FLY_KICKS.getInt("uuid", uuid.toString(), "kicks") + 1;
+                		DB.NETWORK_ANTI_CHEAT_FLY_KICKS.updateInt("kicks", amount, "uuid", uuid.toString());
                 	} else {
                 		DB.NETWORK_ANTI_CHEAT_FLY_KICKS.insert("'" + uuid.toString() + "', '1'");
                 	}
