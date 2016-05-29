@@ -36,7 +36,7 @@ public class SpeedFix extends AntiCheatBase {
     private Map<String, List<Long>> violations = null;
     private Map<String, Integer> delay = null;
     private List<String> badBlockDelay = null;
-    private String[] badBlocks = null;
+    private String [] badBlocks = null;
     private long ticks = 0;
 
     public SpeedFix() {
@@ -44,7 +44,7 @@ public class SpeedFix extends AntiCheatBase {
         violations = new HashMap<String, List<Long>>();
         delay = new HashMap<String, Integer>();
         badBlockDelay = new ArrayList<String>();
-        badBlocks = new String[]{"STAIR", "SLAB", "ICE"};
+        badBlocks = new String [] {"STAIR", "SLAB", "ICE"};
         EventUtil.register(this);
     }
 
@@ -119,10 +119,10 @@ public class SpeedFix extends AntiCheatBase {
     
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-    	if(isEnabled()) {
+    	if (isEnabled()) {
     		Player player = event.getPlayer();
-    		violations.remove(player.getName());
     		delay.put(player.getName(), 20);
+    		violations.remove(player.getName());
     	}
     }
 
