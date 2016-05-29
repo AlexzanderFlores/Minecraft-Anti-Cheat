@@ -161,9 +161,9 @@ public class SpeedFix extends AntiCheatBase {
                     	return;
                     }
                     double distance = event.getDistance();
-                    Bukkit.getLogger().info(name + ": " + distance);
                     double max = 9;
                     if (distance > max) {
+                    	Bukkit.getLogger().info(name + ": " + distance);
                     	List<Long> violation = violations.get(name);
                         if (violation == null) {
                             violation = new ArrayList<Long>();
