@@ -37,7 +37,11 @@ public class BlocksPerSecondLogger implements Listener {
                     }
                     lastLocations.put(name, pLoc);
                     if (pLoc.getWorld().getName().equals(lLoc.getWorld().getName()) && pLoc.getY() >= lLoc.getY()) {
-                        double distance = pLoc.distance(lLoc);
+                    	double lX = lLoc.getX();
+                    	double lZ = lLoc.getZ();
+                    	double pX = pLoc.getX();
+            			double pZ = pLoc.getZ();
+            			double distance = Math.sqrt((lX - pX) * (lX - pX) + (lZ - pZ) * (lZ - pZ));
                         if (distance > 0) {
                             Bukkit.getPluginManager().callEvent(new BPSEvent(player, distance));
                         }
