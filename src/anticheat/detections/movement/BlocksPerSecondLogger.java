@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,11 @@ public class BlocksPerSecondLogger implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         lastLocations.remove(event.getPlayer().getName());
+    }
+    
+    @EventHandler
+    public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+    	lastLocations.remove(event.getPlayer().getName());
     }
 
     @EventHandler
