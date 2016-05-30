@@ -1,31 +1,27 @@
 package anticheat.detections.movement;
 
-import anticheat.AntiCheatBase;
-import anticheat.events.PlayerLeaveEvent;
-import anticheat.util.AsyncDelayedTask;
-import anticheat.util.DB;
-import anticheat.util.EventUtil;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.*;
+import anticheat.AntiCheatBase;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.util.EventUtil;
 
 public class ConstantMovement extends AntiCheatBase {
     private Map<String, Integer> headlessViolations = null;
     private Map<String, Double> lastMovements = null;
     private Map<String, Integer> movementViolations = null;
-    private List<String> reported = null; // temporary list for people reported for high jump. To prevent multiple MySQL queries
-    private List<String> reported2 = null; // temporary list for people reported for constant movement. To prevent multiple MySQL queries
 
     public ConstantMovement() {
         super("ConstantMovement");
         headlessViolations = new HashMap<String, Integer>();
         lastMovements = new HashMap<String, Double>();
         movementViolations = new HashMap<String, Integer>();
-        reported = new ArrayList<String>();
-        reported2 = new ArrayList<String>();
         EventUtil.register(this);
     }
 
@@ -61,16 +57,7 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Wurst High Jump
 				 */
                 if (("" + difference).startsWith("1.02000")) {
-                    if (!reported.contains(player.getName())) {
-                        reported.add(player.getName());
-                        final UUID uuid = player.getUniqueId();
-                        new AsyncDelayedTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                DB.NETWORK_HIGH_JUMP_TEST.insert("'" + uuid.toString() + "'");
-                            }
-                        });
-                    }
+                    ban(player);
                     return;
                 }
 				
@@ -89,16 +76,8 @@ public class ConstantMovement extends AntiCheatBase {
                         }
                         movementViolations.put(name, ++violation);
                         if (violation >= 5) {
-                            if (!reported2.contains(player.getName())) {
-                                reported2.add(player.getName());
-                                final UUID uuid = player.getUniqueId();
-                                new AsyncDelayedTask(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DB.NETWORK_CONSTANT_MOVEMENT_TEST.insert("'" + uuid.toString() + "'");
-                                    }
-                                });
-                            }
+                        	ban(player);
+                        	return;
                         }
                     } else {
                         movementViolations.remove(name);
@@ -117,8 +96,6 @@ public class ConstantMovement extends AntiCheatBase {
             headlessViolations.remove(name);
             lastMovements.remove(name);
             movementViolations.remove(name);
-            reported.remove(name);
-            reported2.remove(name);
         }
     }
 }
