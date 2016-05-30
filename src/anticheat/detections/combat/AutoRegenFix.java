@@ -3,7 +3,6 @@ package anticheat.detections.combat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -38,10 +37,8 @@ public class AutoRegenFix extends AntiCheatBase {
 				counter = lastHealed.get(player.getName());
 			}
 			lastHealed.put(player.getName(), ++counter);
-			if(counter >= 2) {
-				event.setCancelled(true);
-				Bukkit.getLogger().info(player.getName() + " regened too fast!");
-				//ban(player);
+			if(counter >= 3) {
+				ban(player);
 			}
 		}
 	}
