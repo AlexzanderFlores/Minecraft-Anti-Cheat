@@ -3,6 +3,7 @@ package anticheat.detections.combat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -15,7 +16,7 @@ public class AutoRegenFix extends AntiCheatBase {
 	private Map<String, Integer> lastHealed = null;
 	
 	public AutoRegenFix() {
-		super("Auto Regen");
+		super("AutoRegen");
 		lastHealed = new HashMap<String, Integer>();
 		EventUtil.register(this);
 	}
@@ -38,7 +39,9 @@ public class AutoRegenFix extends AntiCheatBase {
 			}
 			lastHealed.put(player.getName(), ++counter);
 			if(counter >= 2) {
-				ban(player);
+				event.setCancelled(true);
+				Bukkit.getLogger().info(player.getName() + " regened too fast!");
+				//ban(player);
 			}
 		}
 	}

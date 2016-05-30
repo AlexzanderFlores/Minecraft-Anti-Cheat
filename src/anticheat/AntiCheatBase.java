@@ -22,7 +22,6 @@ import anticheat.detections.combat.AutoCritFix;
 import anticheat.detections.combat.AutoRegenFix;
 import anticheat.detections.combat.ClickPatternDetector;
 import anticheat.detections.combat.FastBowFix;
-import anticheat.detections.combat.killaura.AttackThroughWalls;
 import anticheat.detections.combat.killaura.InventoryKillAuraDetection;
 import anticheat.detections.combat.killaura.KillAura;
 import anticheat.detections.movement.BlocksPerSecondLogger;
@@ -48,7 +47,7 @@ public class AntiCheatBase implements Listener {
         new InvisibleFireGlitchFix();
         new FastBowFix();
         new AutoCritFix();
-        new AttackThroughWalls();
+        //new AttackThroughWalls();
         new AttackDistanceLogger();
         new SpeedFix();
         new FlyFix();
