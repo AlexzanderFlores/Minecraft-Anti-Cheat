@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import anticheat.AntiCheatBase;
 import anticheat.events.TimeEvent;
@@ -30,7 +31,7 @@ public class AutoRegenFix extends AntiCheatBase {
 	
 	@EventHandler
 	public void onEntityRegainHealth(EntityRegainHealthEvent event) {
-		if(event.getEntity() instanceof Player) {
+		if(event.getEntity() instanceof Player && event.getRegainReason() == RegainReason.SATIATED) {
 			Player player = (Player) event.getEntity();
 			int counter = 0;
 			if(lastHealed.containsKey(player.getName())) {
