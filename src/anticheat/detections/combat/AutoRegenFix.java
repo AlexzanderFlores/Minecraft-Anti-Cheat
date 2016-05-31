@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import anticheat.AntiCheatBase;
 import anticheat.events.TimeEvent;
 import anticheat.util.EventUtil;
+import anticheat.util.Timer;
 
 public class AutoRegenFix extends AntiCheatBase {
 	private Map<String, Integer> lastHealed = null;
@@ -40,7 +41,7 @@ public class AutoRegenFix extends AntiCheatBase {
 			lastHealed.put(player.getName(), ++counter);
 			if(counter >= 2) {
 				event.setCancelled(true);
-				if(counter >= 5) {
+				if(counter >= 5 && Timer.getPing(player) < getMaxPing()) {
 					ban(player);
 				}
 			}
