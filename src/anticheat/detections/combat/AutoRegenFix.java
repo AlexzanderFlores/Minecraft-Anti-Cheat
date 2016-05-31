@@ -38,8 +38,11 @@ public class AutoRegenFix extends AntiCheatBase {
 				counter = lastHealed.get(player.getName());
 			}
 			lastHealed.put(player.getName(), ++counter);
-			if(counter >= 3) {
-				ban(player);
+			if(counter >= 2) {
+				event.setCancelled(true);
+				if(counter >= 5) {
+					ban(player);
+				}
 			}
 		}
 	}

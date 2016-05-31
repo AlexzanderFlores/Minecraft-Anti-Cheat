@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -68,6 +69,10 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Various other constant changing Y velocity cheats
 				 */
                 if (lastMovements.containsKey(name)) {
+                	Material type = to.getBlock().getType();
+                	if(type == Material.LADDER || type == Material.VINE) {
+                		return;
+                	}
                     double lastMovement = lastMovements.get(name);
                     if (lastMovement == difference) {
                         int violation = 0;
