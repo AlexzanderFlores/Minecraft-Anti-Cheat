@@ -3,6 +3,7 @@ package anticheat.detections.movement;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -58,7 +59,8 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Wurst High Jump
 				 */
                 if (("" + difference).startsWith("1.02000")) {
-                    ban(player);
+                	player.kickPlayer(ChatColor.RED + "Kicked for High Jump\bIs this an error? Tweet us:\n@OSTBNetwork");
+                    //ban(player);
                     return;
                 }
 				
@@ -81,7 +83,8 @@ public class ConstantMovement extends AntiCheatBase {
                         }
                         movementViolations.put(name, ++violation);
                         if (violation >= 5) {
-                        	ban(player);
+                        	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\bIs this an error? Tweet us:\n@OSTBNetwork");
+                        	//ban(player);
                         	return;
                         }
                     } else {
