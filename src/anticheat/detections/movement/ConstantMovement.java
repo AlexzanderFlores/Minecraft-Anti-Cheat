@@ -70,7 +70,7 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Wurst Spider
 				 * Various other constant changing Y velocity cheats
 				 */
-                if (lastMovements.containsKey(name)) {
+                if (lastMovements.containsKey(name) && !player.isFlying() && player.getTicksLived() >= 20 * 10) {
                 	Material type = to.getBlock().getType();
                 	if(type == Material.LADDER || type == Material.VINE) {
                 		return;
@@ -83,7 +83,7 @@ public class ConstantMovement extends AntiCheatBase {
                         }
                         movementViolations.put(name, ++violation);
                         if (violation >= 5) {
-                        	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\bIs this an error? Tweet us:\n@OSTBNetwork");
+                        	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\nIs this an error? Tweet us:\n@OSTBNetwork");
                         	//ban(player);
                         	return;
                         }

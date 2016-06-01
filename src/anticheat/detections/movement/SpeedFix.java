@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -93,7 +94,8 @@ public class SpeedFix extends AntiCheatBase {
                         for (long ticks : violation) {
                             if (this.ticks - ticks <= 120) {
                                 if (++recent >= 2) {
-                                    ban(player);
+                                	player.kickPlayer(ChatColor.RED + "Kicked for Speed\nIs this invalid? Tweet at us:\n@OSTBNetwork");
+                                    //ban(player);
                                     return;
                                 }
                             }
