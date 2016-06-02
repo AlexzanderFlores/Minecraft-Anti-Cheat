@@ -81,6 +81,7 @@ public class BlocksPerSecondLogger implements Listener {
         double y = vel.getY() < 0 ? vel.getY() * -1 : vel.getY();
         double z = vel.getZ() < 0 ? vel.getZ() * -1 : vel.getZ();
         double value = x + y + z;
+        lastLocations.remove(player.getName());
         delay.put(player.getName(), ((int) value * 5));
     }
 
@@ -88,6 +89,7 @@ public class BlocksPerSecondLogger implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
             Player player = (Player) event.getEntity();
+            lastLocations.remove(player.getName());
             delay.put(player.getName(), 40);
         }
     }
@@ -96,6 +98,7 @@ public class BlocksPerSecondLogger implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
             Player player = (Player) event.getEntity();
+            lastLocations.remove(player.getName());
             delay.put(player.getName(), 40);
         }
     }
@@ -104,6 +107,7 @@ public class BlocksPerSecondLogger implements Listener {
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
     	Player player = event.getPlayer();
         if (!(player.getAllowFlight() && player.isFlying())) {
+        	lastLocations.remove(player.getName());
             delay.put(player.getName(), 20);
         }
     }
@@ -114,6 +118,7 @@ public class BlocksPerSecondLogger implements Listener {
         Location to = event.getTo();
         Block below = to.getBlock().getRelative(0, -1, 0);
         if (to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
+        	lastLocations.remove(player.getName());
             delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
         }
     }
@@ -121,6 +126,7 @@ public class BlocksPerSecondLogger implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
     	Player player = event.getPlayer();
+    	lastLocations.remove(player.getName());
 		delay.put(player.getName(), 60);
     }
 
