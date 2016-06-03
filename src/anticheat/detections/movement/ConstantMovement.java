@@ -26,6 +26,8 @@ public class ConstantMovement extends AntiCheatBase {
         headlessViolations = new HashMap<String, Integer>();
         movementViolations = new HashMap<String, Integer>();
         violationMovements = new ArrayList<Double>();
+        violationMovements.add(-0.125);
+        violationMovements.add(0.2000000000);
         EventUtil.register(this);
     }
 
@@ -83,7 +85,7 @@ public class ConstantMovement extends AntiCheatBase {
                     }
                     movementViolations.put(name, ++violation);
                     if (violation >= 5) {
-                    	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\nIs this an error? Tweet us:\n@OSTBNetwork");
+                    	player.kickPlayer(ChatColor.RED + "Kicked for Constant Movement\nIs this an error? Tweet us:\n@OSTBNetwork");
                     	//ban(player);
                     	return;
                     }
