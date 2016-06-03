@@ -1,6 +1,8 @@
 package anticheat.detections.movement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -16,14 +18,14 @@ import anticheat.util.EventUtil;
 
 public class ConstantMovement extends AntiCheatBase {
     private Map<String, Integer> headlessViolations = null;
-    private Map<String, Double> lastMovements = null;
     private Map<String, Integer> movementViolations = null;
+    private List<Double> violationMovements = null;
 
     public ConstantMovement() {
         super("ConstantMovement");
         headlessViolations = new HashMap<String, Integer>();
-        lastMovements = new HashMap<String, Double>();
         movementViolations = new HashMap<String, Integer>();
+        violationMovements = new ArrayList<Double>();
         EventUtil.register(this);
     }
 
@@ -70,28 +72,24 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Wurst Spider
 				 * Various other constant changing Y velocity cheats
 				 */
-                if (lastMovements.containsKey(name) && !player.isFlying() && player.getTicksLived() >= 20 * 10) {
+                if (violationMovements.contains(difference) && !player.isFlying() && player.getTicksLived() >= 20 * 10) {
                 	Material type = to.getBlock().getType();
                 	if(type == Material.LADDER || type == Material.VINE) {
                 		return;
                 	}
-                    double lastMovement = lastMovements.get(name);
-                    if (lastMovement == difference) {
-                        int violation = 0;
-                        if (movementViolations.containsKey(name)) {
-                            violation = movementViolations.get(name);
-                        }
-                        movementViolations.put(name, ++violation);
-                        if (violation >= 5) {
-                        	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\nIs this an error? Tweet us:\n@OSTBNetwork");
-                        	//ban(player);
-                        	return;
-                        }
-                    } else {
-                        movementViolations.remove(name);
+                	int violation = 0;
+                    if (movementViolations.containsKey(name)) {
+                        violation = movementViolations.get(name);
                     }
+                    movementViolations.put(name, ++violation);
+                    if (violation >= 5) {
+                    	player.kickPlayer(ChatColor.RED + "Kicked for Glide/Spider\nIs this an error? Tweet us:\n@OSTBNetwork");
+                    	//ban(player);
+                    	return;
+                    }
+                } else {
+                	movementViolations.remove(name);
                 }
-                lastMovements.put(name, difference);
             }
         }
     }
@@ -102,7 +100,6 @@ public class ConstantMovement extends AntiCheatBase {
             Player player = event.getPlayer();
             String name = player.getName();
             headlessViolations.remove(name);
-            lastMovements.remove(name);
             movementViolations.remove(name);
         }
     }
