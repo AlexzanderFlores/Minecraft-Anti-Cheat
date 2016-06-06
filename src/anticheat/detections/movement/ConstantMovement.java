@@ -63,7 +63,7 @@ public class ConstantMovement extends AntiCheatBase {
 				 * Wurst High Jump
 				 */
                 if (("" + difference).startsWith("1.02000")) {
-                	player.kickPlayer(ChatColor.RED + "Kicked for High Jump\bIs this an error? Tweet us:\n@OSTBNetwork");
+                	player.kickPlayer(ChatColor.RED + "Kicked for High Jump\nIs this an error? Tweet us:\n@OSTBNetwork");
                     //ban(player);
                     return;
                 }
