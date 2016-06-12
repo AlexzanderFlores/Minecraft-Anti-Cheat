@@ -1,11 +1,9 @@
 package anticheat.detections.combat;
 
-import anticheat.AntiCheatBase;
-import anticheat.events.PlayerLeaveEvent;
-import anticheat.events.TimeEvent;
-import anticheat.util.AsyncDelayedTask;
-import anticheat.util.DB;
-import anticheat.util.EventUtil;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.ClickType;
@@ -13,9 +11,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import anticheat.AntiCheatBase;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.AsyncDelayedTask;
+import anticheat.util.DB;
+import anticheat.util.EventUtil;
 
 public class AutoArmorFix extends AntiCheatBase {
     private Map<String, Integer> lastAction = null;

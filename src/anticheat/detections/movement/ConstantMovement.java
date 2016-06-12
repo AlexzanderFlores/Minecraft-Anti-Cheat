@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import anticheat.AntiCheatBase;
+import anticheat.events.PlayerJumpEvent;
 import anticheat.events.PlayerLeaveEvent;
 import anticheat.util.EventUtil;
 
@@ -58,6 +60,9 @@ public class ConstantMovement extends AntiCheatBase {
             Location from = event.getFrom();
             double difference = to.getY() - from.getY();
             if (difference != 0) {
+            	if (("" + difference).startsWith("0.4199999")) {
+            		Bukkit.getPluginManager().callEvent(new PlayerJumpEvent(player));
+            	}
 				/*
 				 * Check for:
 				 * Wurst High Jump
