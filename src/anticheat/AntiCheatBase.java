@@ -23,7 +23,6 @@ import anticheat.detections.combat.AutoRegenFix;
 import anticheat.detections.combat.ClickPatternDetector;
 import anticheat.detections.combat.FastBowFix;
 import anticheat.detections.combat.killaura.InventoryKillAuraDetection;
-import anticheat.detections.combat.killaura.KillAura;
 import anticheat.detections.movement.BlocksPerSecondLogger;
 import anticheat.detections.movement.ConstantMovement;
 import anticheat.detections.movement.FlyFix;
@@ -56,7 +55,6 @@ public class AntiCheatBase implements Listener {
         new WaterWalkDetection();
         new AutoClicker();
         new ClickPatternDetector();
-        new KillAura();
         new AutoArmorFix();
         new AutoEatFix();
         //new AutoSprintFix(); // TODO: Fix

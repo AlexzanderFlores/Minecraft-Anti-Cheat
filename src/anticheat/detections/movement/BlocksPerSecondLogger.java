@@ -1,28 +1,26 @@
 package anticheat.detections.movement;
 
-import anticheat.events.BPSEvent;
-import anticheat.events.PlayerLeaveEvent;
-import anticheat.events.TimeEvent;
-import anticheat.util.EventUtil;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import anticheat.events.BPSEvent;
+import anticheat.events.PlayerLeaveEvent;
+import anticheat.events.TimeEvent;
+import anticheat.util.EventUtil;
 
 public class BlocksPerSecondLogger implements Listener {
     private Map<String, Location> lastLocations = null;
@@ -109,17 +107,6 @@ public class BlocksPerSecondLogger implements Listener {
         if (!(player.getAllowFlight() && player.isFlying())) {
         	lastLocations.remove(player.getName());
             delay.put(player.getName(), 20);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-    	Player player = event.getPlayer();
-        Location to = event.getTo();
-        Block below = to.getBlock().getRelative(0, -1, 0);
-        if (to.getBlock().getType() == Material.SLIME_BLOCK || below.getType() == Material.SLIME_BLOCK) {
-        	lastLocations.remove(player.getName());
-            delay.put(player.getName(), 5 * ((int) (player.getFallDistance())));
         }
     }
     
